@@ -12,14 +12,14 @@ CyberDIP是通过计算机USB控制的触摸屏点击设备，通过搭载[grbl 
 
 ***
 ###TODO
-* Solution to replace Airplayer.exe+PrintScreen
+* Find solution to replace Airplayer.exe+PrintScreen
 
 
 ###Depends
 * Qt 5.7
 * FFmpeg 2.2.2	(included in [/3rdparty](/3rdparty))
+* Android Debug Bridge  (included in [/qtCyberDip/prebuilts](/qtCyberDip/prebuilts))
 * OpenCV 2.4.9+ (optional)
-* grbl 0.8c/0.9j 	(for Arduino)
 	
 ###Framework 
 qtCyberDIP contains 3 parts
@@ -34,8 +34,8 @@ qtCyberDIP contains 3 parts
 * Git Bash Here: git clone https://github.com/LostXine/qtCyberDIP
 * Unzip 3rdparty/ffmpeg-2.2.2-(x86 or x64)-shared.7z, add folder /bin into Environment Variable 'Path'
 * Open qtCyberDIP.sln in Visual Studio 2013+ and follow the instructions in stdafx.h
+* Build and enjoy it.
 * (Optional)Uncomment #define VIA_OPENCV and config OpenCV
-* Build it and enjoy
 
 ###使用方法
 * 安装Qt 5.7与相应版本Qt的VS插件
@@ -44,8 +44,8 @@ qtCyberDIP contains 3 parts
 * 在目标文件夹中右键选择Git Bash Here,在打开的命令行中输入：git clone https://github.com/LostXine/qtCyberDIP
 * 解压缩3rdparty/ffmpeg-2.2.2-(x86 or x64)-shared.7z,并把其中的/bin目录加入系统环境变量Path中
 * 使用VS2013及以上版本打开工程文件qtCyberDIP.sln, 并阅读stdafx.h中的操作说明
-* (可选)反注销#define VIA_OPENCV并配置OpenCV环境
 * 编译运行即可
+* (可选)反注销#define VIA_OPENCV并配置OpenCV环境
 
 
 ***
