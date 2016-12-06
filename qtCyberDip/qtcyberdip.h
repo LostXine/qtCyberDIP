@@ -29,12 +29,12 @@ struct Device
 };
 #ifdef VIA_OPENCV
 struct MouseArgs{
-	CvRect box;
+	cv::Rect box;
 	bool Drawing, Hit;
 	// init
 	MouseArgs() :Drawing(false), Hit(false)
 	{
-		box = cvRect(0,0, -1, -1);
+		box = cv::Rect(0,0, -1, -1);
 	}
 };
 

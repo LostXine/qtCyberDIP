@@ -876,7 +876,7 @@ void qtCyberDip::processImg(QImage img)
 	if (initImg)
 	{
 		cv::namedWindow(winName);
-		cvSetMouseCallback(winName.c_str(), mouseCallback, (void*)&(argM));
+		cv::setMouseCallback(winName.c_str(), mouseCallback, (void*)&(argM));
 		initImg = false;
 	}
 	cv::Mat pt = QImage2cvMat(img);
