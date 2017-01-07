@@ -894,7 +894,7 @@ void qtCyberDip::processImg(QImage img)
 		{
 			comHitDown();
 		}
-			comMoveToScale(((double)argM.box.x + argM.box.width) / pt.cols, ((double)argM.box.y + argM.box.height - UP_CUT) / pt.rows);
+		comMoveToScale(((double)argM.box.x + argM.box.width) / pt.cols, ((double)argM.box.y + argM.box.height - UP_CUT) / (pt.rows- UP_CUT));
 			argM.box.x = -1; argM.box.y = -1;
 		if (argM.Hit)
 		{
