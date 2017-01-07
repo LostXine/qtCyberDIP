@@ -49,7 +49,7 @@ comSPH(nullptr), comPosX(0), comPosY(0), initImg(true), hitDown(false), fetch(fa
 	ui->comSelList->installEventFilter(this);
 	//     | Who sends event &&         | Who will watch event
 
-	
+
 	startTimer(500);
 }
 
@@ -180,7 +180,7 @@ void qtCyberDip::bbqClickConnect()
 	screen->setShowFps(ui->bbqShowFps->isChecked());
 	screen->show();
 	screen->connectTo(ui->bbqIP->text());
-	
+
 	// Hide this dialog
 	hide();
 	setCursor(Qt::ArrowCursor);
@@ -353,7 +353,7 @@ void qtCyberDip::bbqStartUsbService()
 	ui->bbqBootstrapUSB->setEnabled(false);
 	ui->bbqBootstrapUSB->setText("Starting...");
 
-	
+
 	setCursor(Qt::WaitCursor);
 	qApp->processEvents();
 
@@ -463,7 +463,7 @@ void qtCyberDip::bbqClickShowDebugLog()
 	}
 
 	bbqDebugWidget->show();
-	
+
 }
 
 void qtCyberDip::comInitPara()
@@ -615,18 +615,18 @@ void qtCyberDip::comClickConnectButton()
 	setCursor(Qt::WaitCursor);
 	bool built = comSPH;
 	bool online = false;
-	if (built){online = comSPH->isOpen(); }
+	if (built){ online = comSPH->isOpen(); }
 	if (online)
-	{ 
+	{
 		comLogAdd("Disconnecting..", 2);
 		comSPH->disConnect();
-		if (!(comSPH->isOpen())){ comLogAdd("Done.",2); }
+		if (!(comSPH->isOpen())){ comLogAdd("Done.", 2); }
 		ui->comSelList->setCurrentIndex(-1);
 	}
 	else
-	{ 
+	{
 		int index = ui->comSelList->currentIndex();
-		if (index >= 0 && index<comPorts.length())
+		if (index >= 0 && index < comPorts.length())
 		{
 			comLogAdd("Connecting..", 2);
 			if (!built)
@@ -635,7 +635,7 @@ void qtCyberDip::comClickConnectButton()
 				connect(comSPH, SIGNAL(serialPortSignals(QString, int)), this, SLOT(comLogAdd(QString, int)));
 			}
 			comSPH->setPort(comPorts[index]);
-			
+
 			if (comSPH->connectTo((ui->comCheckS->isChecked()) ? QSerialPort::Baud115200 : QSerialPort::Baud9600))
 			{
 				comLogAdd("Done.", 2);
@@ -654,7 +654,7 @@ void qtCyberDip::comUpdateUI()
 {
 	bool online = comSPH;
 	if (online){ online = comSPH->isOpen(); }
-	ui->comConnectButton->setText((online)?"Disconnect":"Connect");
+	ui->comConnectButton->setText((online) ? "Disconnect" : "Connect");
 	ui->comSendButton->setEnabled(online);
 	ui->comHitButton->setEnabled(online);
 	ui->comHitButton->setEnabled(online);
@@ -668,7 +668,7 @@ void qtCyberDip::comUpdateUI()
 
 void qtCyberDip::comUpdatePos()
 {
-	ui->comPosLabel->setText("X: "+QString::number(comPosX) + "\nY: "+QString::number(comPosY));
+	ui->comPosLabel->setText("X: " + QString::number(comPosX) + "\nY: " + QString::number(comPosY));
 }
 
 
@@ -679,8 +679,8 @@ void  qtCyberDip::comLogAdd(QString txt, int type = 0)
 	//2 -system
 	switch (type)
 	{
-	case 1:ui->comMainLog->append(">>"+txt +"\n"); break;
-	case 2:ui->comMainLog->append("/***   "+txt+"   ***/"); break;
+	case 1:ui->comMainLog->append(">>" + txt + "\n"); break;
+	case 2:ui->comMainLog->append("/***   " + txt + "   ***/"); break;
 	default:
 		ui->comMainLog->insertPlainText(txt);
 		break;
@@ -765,7 +765,7 @@ void qtCyberDip::comRequestToSend(QString txt)
 void qtCyberDip::comMoveStepUp()
 {
 	comMoveTo(comPosX, comPosY - ui->comSpinBox->value());
-	
+
 }
 
 void qtCyberDip::comMoveStepDown()
@@ -778,7 +778,7 @@ void qtCyberDip::comMoveStepLeft()
 }
 void qtCyberDip::comMoveStepRight()
 {
-	
+
 	comMoveTo(comPosX + ui->comSpinBox->value(), comPosY);
 }
 
@@ -804,7 +804,7 @@ void qtCyberDip::capClickScanButton()
 {
 
 	capClickClearButton();
-	EnumWindows(capEveryWindowProc,(LPARAM) this);
+	EnumWindows(capEveryWindowProc, (LPARAM) this);
 }
 
 void qtCyberDip::capAddhWnd(HWND hWnd, QString nameToShow)
@@ -830,15 +830,15 @@ BOOL CALLBACK capEveryWindowProc(HWND hWnd, LPARAM parameter)
 	wchar_t szCaption[500];
 	::GetWindowText(hWnd, szCaption, sizeof(szCaption));
 	//if (wcslen(szCaption) <= 0){ return true; }
-	((qtCyberDip*)parameter)->capAddhWnd(hWnd,"0x"+ QString::number((uint)hWnd, 16) + "  " + QString::fromWCharArray(szCaption));
+	((qtCyberDip*)parameter)->capAddhWnd(hWnd, "0x" + QString::number((uint)hWnd, 16) + "  " + QString::fromWCharArray(szCaption));
 	return true;
 }
 
 void qtCyberDip::capClickConnect()
 {
-	
+
 	int index = ui->capList->currentRow();
-	if (index>capWins.size()-1 || index<0){ return; }
+	if (index > capWins.size() - 1 || index < 0){ return; }
 	setCursor(Qt::WaitCursor);
 	qDebug() << "Windows Handle: " << capWins[index];
 	capScreenForm* screen = new capScreenForm(this);
@@ -876,26 +876,27 @@ void qtCyberDip::processImg(QImage img)
 	if (initImg)
 	{
 		cv::namedWindow(winName);
-		cv::setMouseCallback(winName.c_str(), mouseCallback, (void*)&(argM));
+		cv::setMouseCallback(winName, mouseCallback, (void*)&(argM));
 		initImg = false;
 	}
 	cv::Mat pt = QImage2cvMat(img);
+	pt = pt(cv::Rect(0,UP_CUT,pt.cols,pt.rows-UP_CUT));
 	cv::imshow(winName, pt);
 
 	cv::Size imgSize = pt.size();
-	
+
 	if (argM.box.x >= 0 && argM.box.x < imgSize.width&&
 		argM.box.y >= 0 && argM.box.y < imgSize.height
 		)
 	{
-		
+
 		qDebug() << "X:" << argM.box.x << " Y:" << argM.box.y;
 		if (argM.Hit)
 		{
 			comHitDown();
 		}
-			comMoveToScale(((double)argM.box.x + argM.box.width) / pt.cols, ((double)argM.box.y + argM.box.height - UP_CUT) / pt.rows);
-			argM.box.x = -1; argM.box.y = -1;
+		comMoveToScale(((double)argM.box.x + argM.box.width) / pt.cols, ((double)argM.box.y + argM.box.height) / pt.rows);
+		argM.box.x = -1; argM.box.y = -1;
 		if (argM.Hit)
 		{
 			comHitUp();
@@ -905,9 +906,9 @@ void qtCyberDip::processImg(QImage img)
 			comClickHitButton();
 		}
 	}
-	
+
 #endif
-	
+
 }
 
 
