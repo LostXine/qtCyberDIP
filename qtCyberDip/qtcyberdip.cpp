@@ -1,15 +1,21 @@
 #include "stdafx.h"
 #include "qtcyberdip.h"
 #include "ui_qtcyberdip.h"
-
+#include "bbqScreenForm.h"
+#include "capScreenForm.h"
 
 #define ADB_PATH "prebuilts/adb.exe"
 
+#ifdef VIA_OPENCV
+#include "usrGameController.h"
+//游戏逻辑与图像识别类
+usrGameController* usrGC;
+#endif
 
 qtCyberDip::qtCyberDip(QWidget *parent) :
 QMainWindow(parent),
-ui(new Ui::qtCyberDip), bbqADBProcess(NULL), bbqDebugWidget(nullptr), bbqServiceShouldRun(false), bbqCrashCount(0),
-comSPH(nullptr), comPosX(0), comPosY(0), initImg(true), hitDown(false), fetch(false)
+ui(new Ui::qtCyberDip), bbqADBProcess(nullptr), bbqDebugWidget(nullptr), bbqServiceShouldRun(false), bbqCrashCount(0),
+comSPH(nullptr), comPosX(0), comPosY(0), comIsDown(false), comFetch(false)
 {
 	ui->setupUi(this);
 
@@ -175,7 +181,10 @@ void qtCyberDip::bbqClickConnect()
 
 	// The IP is valid, connect to there
 	bbqScreenForm* screen = new bbqScreenForm(this);
+#ifdef VIA_OPENCV
+	usrGC = new usrGameController(this);
 	connect(screen, SIGNAL(imgReady(QImage)), this, SLOT(processImg(QImage)));
+#endif
 	screen->setAttribute(Qt::WA_DeleteOnClose);
 	screen->setShowFps(ui->bbqShowFps->isChecked());
 	screen->show();
@@ -735,10 +744,15 @@ void qtCyberDip::comClickClearButton()
 
 void qtCyberDip::comClickHitButton()
 {
+	comHitOnce();
+}
+
+void qtCyberDip::comHitOnce()
+{
 	comHitDown();
 	comRequestToSend("G91");//相对坐标
 	//用不存在的Z轴实现延时功能
-	if (fetch)
+	if (comFetch)
 	{
 		comRequestToSend("G1 Z-0.01 F5.");
 	}
@@ -746,7 +760,7 @@ void qtCyberDip::comClickHitButton()
 	{
 		comRequestToSend("G1 Z0.01 F5.");
 	}
-	fetch = !fetch;
+	comFetch = !comFetch;
 	comHitUp();
 }
 
@@ -784,12 +798,12 @@ void qtCyberDip::comMoveStepRight()
 
 void qtCyberDip::comHitDown()
 {
-	hitDown = true;
+	comIsDown = true;
 	comRequestToSend("M3 S1000");
 }
 void qtCyberDip::comHitUp()
 {
-	hitDown = false;
+	comIsDown = false;
 	comRequestToSend("M5");
 }
 
@@ -842,7 +856,10 @@ void qtCyberDip::capClickConnect()
 	setCursor(Qt::WaitCursor);
 	qDebug() << "Windows Handle: " << capWins[index];
 	capScreenForm* screen = new capScreenForm(this);
+#ifdef VIA_OPENCV
+	usrGC = new usrGameController(this);
 	connect(screen, SIGNAL(imgReady(QImage)), this, SLOT(processImg(QImage)));
+#endif
 	screen->capSetHWND(capWins[index]);
 	screen->show();
 	hide();
@@ -856,61 +873,15 @@ void qtCyberDip::capDoubleClickWin(QListWidgetItem* item)
 	capClickConnect();
 }
 
-//STEP3:替换这里的图像处理代码
-//每当收到一张图片时都会调用该函数
 void qtCyberDip::processImg(QImage img)
 {
-	//*************************************************************//
-	//                                                             //
-	//                                                             //
-	//         TODO:使用你的代码替换下面的图像处理代码             //
-	//                                                             //
-	//          建议使用comMoveToScale(x,y)发送控制指令            //
-	//                                                             //
-	//*************************************************************//
-
 #ifdef VIA_OPENCV
-	cv::String winName = "Frame";
-
-	//初始化
-	if (initImg)
+	if (usrGC != nullptr)
 	{
-		cv::namedWindow(winName);
-		cv::setMouseCallback(winName, mouseCallback, (void*)&(argM));
-		initImg = false;
+		usrGC->usrProcessImage(QImage2cvMat(img));
 	}
-	cv::Mat pt = QImage2cvMat(img);
-	pt = pt(cv::Rect(0,UP_CUT,pt.cols,pt.rows-UP_CUT));
-	cv::imshow(winName, pt);
-
-	cv::Size imgSize = pt.size();
-
-	if (argM.box.x >= 0 && argM.box.x < imgSize.width&&
-		argM.box.y >= 0 && argM.box.y < imgSize.height
-		)
-	{
-
-		qDebug() << "X:" << argM.box.x << " Y:" << argM.box.y;
-		if (argM.Hit)
-		{
-			comHitDown();
-		}
-		comMoveToScale(((double)argM.box.x + argM.box.width) / pt.cols, ((double)argM.box.y + argM.box.height) / pt.rows);
-		argM.box.x = -1; argM.box.y = -1;
-		if (argM.Hit)
-		{
-			comHitUp();
-		}
-		else
-		{
-			comClickHitButton();
-		}
-	}
-
 #endif
-
 }
-
 
 #ifdef VIA_OPENCV
 cv::Mat qtCyberDip::QImage2cvMat(QImage image)
@@ -935,52 +906,14 @@ cv::Mat qtCyberDip::QImage2cvMat(QImage image)
 	return mat;
 }
 
-
-void mouseCallback(int event, int x, int y, int flags, void*param)
-{
-	MouseArgs* m_arg = (MouseArgs*)param;
-	switch (event)
-	{
-	case CV_EVENT_MOUSEMOVE: // 鼠标移动时
-	{
-		if (m_arg->Drawing)
-		{
-			m_arg->box.width = x - m_arg->box.x;
-			m_arg->box.height = y - m_arg->box.y;
-		}
-	}
-	break;
-	case CV_EVENT_LBUTTONDOWN :case CV_EVENT_RBUTTONDOWN: // 左/右键按下
-	{
-		m_arg->Hit = event == CV_EVENT_RBUTTONDOWN;
-		m_arg->Drawing = true;
-		m_arg->box = cvRect(x, y, 0, 0);
-	}
-	break;
-	case CV_EVENT_LBUTTONUP :case CV_EVENT_RBUTTONUP: // 左/右键弹起
-	{
-		m_arg->Hit = false;
-		m_arg->Drawing = false;
-		if (m_arg->box.width<0)
-		{
-			m_arg->box.x += m_arg->box.width;
-			m_arg->box.width *= -1;
-		}
-		if (m_arg->box.height<0)
-		{
-			m_arg->box.y += m_arg->box.height;
-			m_arg->box.height *= -1;
-		}
-	}
-	break;
-	}
-}
-
 void qtCyberDip::closeCV()
 {
-	initImg = true;
-	cv::destroyAllWindows();
 	comClickRetButton();
+	if (usrGC != nullptr)
+	{
+		delete usrGC;
+		usrGC = nullptr;
+	}
 }
 #endif
 

@@ -32,21 +32,16 @@ qtCyberDIP contains 3 parts
 * Install Driver for CH340 Chipset after connected to CyberDIP.
 * Install Git for windows
 * Git Bash Here: git clone https://github.com/LostXine/qtCyberDIP
-* Unzip 3rdparty/ffmpeg-2.2.2-(x86 or x64)-shared.7z, add folder /bin into Environment Variable 'Path'
+* Add '3rdparty/x64' (or '3rdparty/x86', depending on your project platform) into Environment Variable 'Path'
 * Open qtCyberDIP.sln in Visual Studio 2013+ and follow the instructions in stdafx.h
-* Build and enjoy it.
-* (Optional)Uncomment #define VIA_OPENCV and config OpenCV
 
 ###使用方法
 * 安装Qt 5.7与相应版本Qt的VS插件
 * 连接CyberDIP后，安装CH340 芯片组驱动
 * 安装git for windows
 * 在目标文件夹中右键选择Git Bash Here,在打开的命令行中输入：git clone https://github.com/LostXine/qtCyberDIP
-* 解压缩3rdparty/ffmpeg-2.2.2-(x86 or x64)-shared.7z,并把其中的/bin目录加入系统环境变量Path中
-* 使用VS2013及以上版本打开工程文件qtCyberDIP.sln, 并阅读stdafx.h中的操作说明
-* 编译运行即可
-* (可选)反注销#define VIA_OPENCV并配置OpenCV环境
-
+* 根据编译平台将3rdparty/x64(或3rdprty/x86,取决于你的编译平台)加入系统环境变量Path中
+* 使用VS2013及以上版本打开工程文件qtCyberDIP.sln, 并按照stdafx.h中的说明操作
 
 ***
 
@@ -58,11 +53,4 @@ qtCyberDIP contains 3 parts
 * Email:lostxine@gmail.com
 * Address:Room 2#302B, SEIEE Building, 800 DongchuanRd., Shanghai, PR China (200240) 
 
-###开发者
-* 周越 副教授 上海交通大学 自动化系
-* 李响 上海交通大学 自动化系
-
-###联系我们
-* 电子邮箱：lostxine@gmail.com
-* 地址：上海市闵行区东川路800号电信群楼2#302B(200240)
 

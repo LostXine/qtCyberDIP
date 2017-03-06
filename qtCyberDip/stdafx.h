@@ -20,7 +20,7 @@
 
 //STEP1: 注销掉#define VIA_OPENCV以在配置OpenCV前尝试编译本程序 编译通过后再配置OpenCV内容
 //STEP1: Comment #define VIA_OPENCV and build -> Test your QT and FFmpeg settings.
-//#define VIA_OPENCV
+#define VIA_OPENCV
 
 //STEP2: 测量并定义好设备的长宽以及窗口的上边缘
 //RANGE  表示设备屏幕在CyberDIP中的尺寸
@@ -32,14 +32,11 @@
 #define RANGE_Y 47
 #define UP_CUT 35.0
 
-//STEP3: 在qtCyberDIP.cpp中修改相应的图像处理代码
-//STEP3: Modify codes in qtCyberDIP.cpp for image processing.
+//STEP3: 配置OpenCV并取消VIA_OPENCV的注释
+//STEP3: Config OpenCV and uncomment VIA_OPENCV
+
+//STEP4: 在usrGameController.h和usrGameController.cpp中修改相应的图像处理代码
+//STEP4: Modify codes in usrGameController.h and usrGameController.cpp for image processing.
 
 //以下不必更改
 #include <QtWidgets/QtWidgets>
-
-#ifdef VIA_OPENCV
-#include <opencv2\opencv.hpp>
-#include <opencv\cv.h>
-#include <opencv\highgui.h>
-#endif

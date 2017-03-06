@@ -23,6 +23,7 @@ capScreenForm::~capScreenForm()
 
 void capScreenForm::closeEvent(QCloseEvent *evt)
 {
+	this->disconnect(SIGNAL(imgReady(QImage)));
 #ifdef VIA_OPENCV
 	mParentWindow->closeCV();
 #endif
