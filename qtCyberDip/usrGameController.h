@@ -22,13 +22,13 @@ void  mouseCallback(int event, int x, int y, int flags, void*param);
 class usrGameController
 {
 private:
-	qtCyberDip* cyberDip;
+	deviceCyberDip* device;
 	unsigned int imgCount;
 
 	MouseArgs argM;
 public:
 	//构造函数，所有变量的初始化都应在此完成
-	usrGameController(qtCyberDip* qtCD);
+	usrGameController(void* qtCD);
 	//析构函数，回收本类所有资源
 	~usrGameController();
 	//处理图像函数，每次收到图像时都会调用

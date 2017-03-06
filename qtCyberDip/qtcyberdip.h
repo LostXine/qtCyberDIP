@@ -41,14 +41,6 @@ public:
 	explicit qtCyberDip(QWidget *parent = 0);
 	~qtCyberDip();
 
-	//运动控制所用的操作
-	void comRequestToSend(QString txt);
-	void comMoveTo(double x, double y);
-	void comMoveToScale(double ratioX, double ratioY);
-	void comHitDown();
-	void comHitUp();
-	void comHitOnce();
-
 protected:
 	//Reimplemented functions;
 	void closeEvent(QCloseEvent* evt);
@@ -111,6 +103,14 @@ private:
 	void comUpdatePos();
 	void comSendBytes();
 	void comScanPorts();
+	//运动控制所用的操作
+	void comRequestToSend(QString txt);
+	void comMoveTo(double x, double y);
+	void comMoveToScale(double ratioX, double ratioY);
+	void comHitDown();
+	void comHitUp();
+	void comHitOnce();
+	friend class deviceCyberDip;	//声明友元
 	/*******屏幕捕捉相关变量与方法*******/
 	QList<HWND> capWins;
 	//扫描添加窗口
@@ -125,6 +125,23 @@ public:
 	void closeCV();
 #endif
 };
+
+#ifdef VIA_OPENCV
+class deviceCyberDip
+{
+private:
+	qtCyberDip* qt_ptr;
+public:
+	deviceCyberDip(void* qtCD) :qt_ptr((qtCyberDip*)qtCD){};
+	//暴露给游戏控制的运动操作
+	void comRequestToSend(QString txt);
+	void comMoveTo(double x, double y);
+	void comMoveToScale(double ratioX, double ratioY);
+	void comHitDown();
+	void comHitUp();
+	void comHitOnce();
+};
+#endif
 
 Q_GUI_EXPORT QImage qt_imageFromWinHBITMAP(HDC hdc, HBITMAP bitmap, int w, int h);
 BOOL CALLBACK capEveryWindowProc(HWND hWnd, LPARAM parameter);

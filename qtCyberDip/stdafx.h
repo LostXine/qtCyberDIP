@@ -15,12 +15,22 @@
 //*************************************************************//
 //上面的边框受编译器、字体限制是对不齐的，强迫症们放弃吧..
 
+//*************************相关定义*****************************//
+//************************Definitions***************************//
+
+//#define VIA_OPENCV
+#define RANGE_X 61
+#define RANGE_Y 47
+#define UP_CUT 35.0
+
+//*************************使用说明*****************************//
+//************************Instruction***************************//
+
 //STEP0:在上方QT菜单中配置QT版本
 //STEP0:Set QT version
 
 //STEP1: 注销掉#define VIA_OPENCV以在配置OpenCV前尝试编译本程序 编译通过后再配置OpenCV内容
 //STEP1: Comment #define VIA_OPENCV and build -> Test your QT and FFmpeg settings.
-#define VIA_OPENCV
 
 //STEP2: 测量并定义好设备的长宽以及窗口的上边缘
 //RANGE  表示设备屏幕在CyberDIP中的尺寸
@@ -28,9 +38,6 @@
 //STEP2: Measure the range of your device in CyberDIP.
 //RANGE  means the screen size of device in CyberDIP coordinates.
 //UP_CUT is used to chop the title of video window.
-#define RANGE_X 61
-#define RANGE_Y 47
-#define UP_CUT 35.0
 
 //STEP3: 配置OpenCV并取消VIA_OPENCV的注释
 //STEP3: Config OpenCV and uncomment VIA_OPENCV

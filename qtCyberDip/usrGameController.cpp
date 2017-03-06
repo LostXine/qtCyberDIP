@@ -2,9 +2,10 @@
 #include "usrGameController.h"
 
 //构造与初始化
-usrGameController::usrGameController(qtCyberDip* qtCD) :cyberDip(qtCD)
+usrGameController::usrGameController(void* qtCD)
 {
 	qDebug() << "usrGameController online.";
+	device = new deviceCyberDip(qtCD);//设备代理类
 	cv::namedWindow(WIN_NAME);
 	cv::setMouseCallback(WIN_NAME, mouseCallback, (void*)&(argM));
 }
@@ -13,6 +14,10 @@ usrGameController::usrGameController(qtCyberDip* qtCD) :cyberDip(qtCD)
 usrGameController::~usrGameController()
 {
 	cv::destroyAllWindows();
+	if (device != nullptr)
+	{
+		delete device;
+	}
 	qDebug() << "usrGameController offline.";
 }
 
@@ -33,7 +38,7 @@ int usrGameController::usrProcessImage(cv::Mat& img)
 	cv::Mat pt = img(cv::Rect(0, UP_CUT, imgSize.width,imgSize.height));
 	cv::imshow(WIN_NAME, pt);
 	
-	//判断回调
+	//判断鼠标点击尺寸
 	if (argM.box.x >= 0 && argM.box.x < imgSize.width&&
 		argM.box.y >= 0 && argM.box.y < imgSize.height
 		)
@@ -41,17 +46,17 @@ int usrGameController::usrProcessImage(cv::Mat& img)
 		qDebug() << "X:" << argM.box.x << " Y:" << argM.box.y;
 		if (argM.Hit)
 		{
-			cyberDip->comHitDown();
+			device->comHitDown();
 		}
-		cyberDip->comMoveToScale(((double)argM.box.x + argM.box.width) / pt.cols, ((double)argM.box.y + argM.box.height) / pt.rows);
+		device->comMoveToScale(((double)argM.box.x + argM.box.width) / pt.cols, ((double)argM.box.y + argM.box.height) / pt.rows);
 		argM.box.x = -1; argM.box.y = -1;
 		if (argM.Hit)
 		{
-			cyberDip->comHitUp();
+			device->comHitUp();
 		}
 		else
 		{
-			cyberDip->comHitOnce();
+			device->comHitOnce();
 		}
 	}
 	//qDebug() << "usrGameController process No." << imgCount << " img : Done";
@@ -98,5 +103,4 @@ void mouseCallback(int event, int x, int y, int flags, void*param)
 	break;
 	}
 }
-
 #endif

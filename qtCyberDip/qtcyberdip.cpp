@@ -912,8 +912,38 @@ void qtCyberDip::closeCV()
 	if (usrGC != nullptr)
 	{
 		delete usrGC;
-		usrGC = nullptr;
 	}
+}
+
+void deviceCyberDip::comRequestToSend(QString txt)
+{
+	if (qt_ptr == nullptr) { return; }
+	qt_ptr->comRequestToSend(txt);
+}
+void deviceCyberDip::comMoveTo(double x, double y)
+{
+	if (qt_ptr == nullptr) { return; }
+	qt_ptr->comMoveTo(x, y);
+}
+void deviceCyberDip::comMoveToScale(double ratioX, double ratioY)
+{
+	if (qt_ptr == nullptr) { return; }
+	qt_ptr->comMoveToScale(ratioX, ratioY);
+}
+void deviceCyberDip::comHitDown()
+{
+	if (qt_ptr == nullptr) { return; }
+	qt_ptr->comHitDown();
+}
+void deviceCyberDip::comHitUp()
+{
+	if (qt_ptr == nullptr) { return; }
+	qt_ptr->comHitUp();
+}
+void deviceCyberDip::comHitOnce()
+{
+	if (qt_ptr == nullptr) { return; }
+	qt_ptr->comHitOnce();
 }
 #endif
 

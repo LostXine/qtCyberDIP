@@ -1,5 +1,7 @@
 /ipch/*
 /x64/*
+/Debug/*
+/Release/*
 /qtCyberDip/GeneratedFiles/*
 *.sdf
 *.opensdf
