@@ -1,7 +1,7 @@
 
 //*************************************************************//
 //                                                             //
-//                   CyberDip 驱动程序v0.98.3                   //
+//                   CyberDip 驱动程序v0.99                    //
 //                                                             //
 //             基于 Qt5.7 OpenCV2.4.9  VS2013 等更高版本        //
 //             基于 FFmpeg 2.2.2                               //
@@ -15,12 +15,22 @@
 //*************************************************************//
 //上面的边框受编译器、字体限制是对不齐的，强迫症们放弃吧..
 
+//*************************相关定义*****************************//
+//************************Definitions***************************//
+
+//#define VIA_OPENCV
+#define RANGE_X 61
+#define RANGE_Y 47
+#define UP_CUT 35.0
+
+//*************************使用说明*****************************//
+//************************Instruction***************************//
+
 //STEP0:在上方QT菜单中配置QT版本
 //STEP0:Set QT version
 
 //STEP1: 注销掉#define VIA_OPENCV以在配置OpenCV前尝试编译本程序 编译通过后再配置OpenCV内容
 //STEP1: Comment #define VIA_OPENCV and build -> Test your QT and FFmpeg settings.
-//#define VIA_OPENCV
 
 //STEP2: 测量并定义好设备的长宽以及窗口的上边缘
 //RANGE  表示设备屏幕在CyberDIP中的尺寸
@@ -28,18 +38,12 @@
 //STEP2: Measure the range of your device in CyberDIP.
 //RANGE  means the screen size of device in CyberDIP coordinates.
 //UP_CUT is used to chop the title of video window.
-#define RANGE_X 61
-#define RANGE_Y 47
-#define UP_CUT 35.0
 
-//STEP3: 在qtCyberDIP.cpp中修改相应的图像处理代码
-//STEP3: Modify codes in qtCyberDIP.cpp for image processing.
+//STEP3: 配置OpenCV并取消VIA_OPENCV的注释
+//STEP3: Config OpenCV and uncomment VIA_OPENCV
+
+//STEP4: 在usrGameController.h和usrGameController.cpp中修改相应的图像处理代码
+//STEP4: Modify codes in usrGameController.h and usrGameController.cpp for image processing.
 
 //以下不必更改
 #include <QtWidgets/QtWidgets>
-
-#ifdef VIA_OPENCV
-#include <opencv2\opencv.hpp>
-#include <opencv\cv.h>
-#include <opencv\highgui.h>
-#endif

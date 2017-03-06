@@ -1,6 +1,7 @@
 #ifndef QTCYBERDIP_H
 #define QTCYBERDIP_H
 
+#include "stdafx.h"
 #include <QtWidgets/QMainWindow>
 #include <QtNetwork/QUdpSocket>
 #include <QtNetwork/QNetworkAccessManager>
@@ -10,9 +11,13 @@
 #include <QProcess>
 #include <QtSerialPort/QSerialPort>  
 #include <QtSerialPort/QSerialPortInfo>  
-#include "bbqScreenForm.h"
 #include "comSPHandler.h"
-#include "capScreenForm.h"
+
+#ifdef VIA_OPENCV
+#include <opencv2\opencv.hpp>
+#include <opencv\cv.h>
+#include <opencv\highgui.h>
+#endif
 
 namespace Ui {
 	class qtCyberDip;
@@ -27,18 +32,6 @@ struct Device
 	QString address;
 	QTime lastPing;
 };
-#ifdef VIA_OPENCV
-struct MouseArgs{
-	cv::Rect box;
-	bool Drawing, Hit;
-	// init
-	MouseArgs() :Drawing(false), Hit(false)
-	{
-		box = cv::Rect(0,0, -1, -1);
-	}
-};
-
-#endif
 
 class qtCyberDip : public QMainWindow
 {
@@ -47,7 +40,6 @@ class qtCyberDip : public QMainWindow
 public:
 	explicit qtCyberDip(QWidget *parent = 0);
 	~qtCyberDip();
-	void capAddhWnd(HWND hWnd, QString nameToShow);
 
 protected:
 	//Reimplemented functions;
@@ -82,15 +74,13 @@ private slots:
 	void capClickScanButton();
 	void capClickConnect();
 	void capDoubleClickWin(QListWidgetItem* item);
-
 	void processImg(QImage img);
 
 public slots:
 	void  comLogAdd(QString txt, int type);
-	
-	
 private:
 	Ui::qtCyberDip *ui;
+	/*******BBQ相关变量与方法*******/
 	QUdpSocket* bbqAnnouncer;
 	// Pair device name, device ip / List order is listWidget of devices
 	QList<Device*> bbqDevices;
@@ -103,7 +93,10 @@ private:
 	bool bbqServiceShouldRun;
 	bool bbqServiceStartError;
 	void bbqStartUsbService();
-
+	/*******串口控制相关变量与方法*******/
+	double comPosX, comPosY;
+	bool comIsDown;//电磁铁状态
+	bool comFetch;//防止Z轴越界
 	comSPHandler* comSPH;
 	QList<QSerialPortInfo> comPorts;
 	void comUpdateUI();
@@ -116,31 +109,41 @@ private:
 	void comMoveToScale(double ratioX, double ratioY);
 	void comHitDown();
 	void comHitUp();
-
+	void comHitOnce();
+	friend class deviceCyberDip;	//声明友元
+	/*******屏幕捕捉相关变量与方法*******/
 	QList<HWND> capWins;
-	double comPosX, comPosY;
-	bool initImg;
-	bool hitDown;//电磁铁状态
-	bool fetch;//防止Z轴越界
+	//扫描添加窗口
+	void capAddhWnd(HWND hWnd, QString nameToShow);
+	//声明回调友元
+	friend BOOL CALLBACK capEveryWindowProc(HWND hWnd, LPARAM parameter);
+	/*******OPEN_CV的相关变量与方法*******/
+#ifdef VIA_OPENCV
+	cv::Mat QImage2cvMat(QImage image);
+public:
+	//加载opencv后所有窗口关闭时都会调用的方法
+	void closeCV();
+#endif
+};
 
 #ifdef VIA_OPENCV
-	MouseArgs argM;
-	cv::Mat QImage2cvMat(QImage image);
-
+class deviceCyberDip
+{
+private:
+	qtCyberDip* qt_ptr;
 public:
-	void closeCV();
-	
-#endif
-	
-
+	deviceCyberDip(void* qtCD) :qt_ptr((qtCyberDip*)qtCD){};
+	//暴露给游戏控制的运动操作
+	void comRequestToSend(QString txt);
+	void comMoveTo(double x, double y);
+	void comMoveToScale(double ratioX, double ratioY);
+	void comHitDown();
+	void comHitUp();
+	void comHitOnce();
 };
+#endif
 
 Q_GUI_EXPORT QImage qt_imageFromWinHBITMAP(HDC hdc, HBITMAP bitmap, int w, int h);
 BOOL CALLBACK capEveryWindowProc(HWND hWnd, LPARAM parameter);
-
-#ifdef VIA_OPENCV
-void  mouseCallback(int event, int x, int y, int flags, void*param);
-#endif
-
 
 #endif // QTCYBERDIP_H
