@@ -1,5 +1,5 @@
 # qtCyberDIP
-![CyberDIP](/pic/CyberDIP.JPG)
+![CyberDIP](/pic/CyberDIP.png)
 
 CyberDIP driver for windows in C++ 11.
 
@@ -9,7 +9,7 @@ With the help of Computer Vision, CyberDIP can play many mobile games.
 
 本工程是依赖C++ 11标准编写的CyberDIP在Windows环境下的配套软件。
 
-CyberDIP是通过计算机USB控制的触摸屏点击设备，通过搭载[grbl 0.8c/0.9j](https://github.com/grbl/grbl)的Arduino Nano(ATmega328)控制器，CyberDIP可以将USB串口发来的指令翻译成相应的二维运动与点击操作，模拟单指对屏幕的操作。
+CyberDIP是通过计算机USB控制的触摸屏点击设备(中国实用新型专利2016201772460)，通过搭载[grbl 0.8c/0.9j](https://github.com/grbl/grbl)的Arduino Nano(ATmega328)控制器，CyberDIP可以将USB串口发来的指令翻译成相应的二维运动与点击操作，模拟单指对屏幕的操作。
 结合图像处理算法，CyberDIP可以实现触屏手机上游戏的自动攻略功能。
 
 ***
@@ -35,7 +35,7 @@ qtCyberDIP contains 3 + 1 parts:
 * Install Qt and Qt VS Add-In
 * Download and unzip / clone this project.
 * Install Driver for CH340 Chipset after connected to CyberDIP. ([Driver](/CH340) is included)
-* Add '3rdparty/x64' (Default, if you are using 32-bit OS, add '3rdparty/x86') into Environment Variable 'Path'(__ATTENTION! NEVER CLEAR 'Path'__, unless you are exactly conscious of the consequence)
+* Add '3rdparty/x64' (Default, if you are using 32-bit OS, add '3rdparty/x86') into Environment Variable 'Path' (__ATTENTION! NEVER CLEAR 'Path'__, unless you are exactly conscious of the consequence)
 * Open [qtCyberDip.sln](/qtCyberDip.sln) in Visual Studio and follow the instructions in [stdafx.h](qtCyberDip/stdafx.h)
 
 ###使用方法
@@ -58,9 +58,3 @@ __请参加“数字图像处理基础”的同学注意:__
 ###Contact me
 * Email: lostxine@gmail.com
 * Address: Room 2#302B, SEIEE Building, 800 DongchuanRd., Shanghai, PR China (200240)
-
-***
-###Screenshot
-![qtCyberDip_COM](/pic/qtCyberDip_COM.png)
-![qtCyberDip_bbq](/pic/qtCyberDip_bbq.png)
-![qtCyberDip_cap](/pic/qtCyberDip_cap.png)
