@@ -1,6 +1,6 @@
-#ifdef VIA_OPENCV
 #include "usrGameController.h"
 
+#ifdef VIA_OPENCV
 //构造与初始化
 usrGameController::usrGameController(void* qtCD)
 {
@@ -24,9 +24,6 @@ usrGameController::~usrGameController()
 //处理图像 
 int usrGameController::usrProcessImage(cv::Mat& img)
 {
-	imgCount++;
-	//qDebug() << "usrGameController process No." << imgCount << " img : Start";
-
 	cv::Size imgSize(img.cols, img.rows - UP_CUT);
 	if (imgSize.height <= 0 || imgSize.width <= 0)
 	{
@@ -59,14 +56,13 @@ int usrGameController::usrProcessImage(cv::Mat& img)
 			device->comHitOnce();
 		}
 	}
-	//qDebug() << "usrGameController process No." << imgCount << " img : Done";
 	return 0; 
 }
 
 //鼠标回调函数
 void mouseCallback(int event, int x, int y, int flags, void*param)
 {
-	MouseArgs* m_arg = (MouseArgs*)param;
+	usrGameController::MouseArgs* m_arg = (usrGameController::MouseArgs*)param;
 	switch (event)
 	{
 	case CV_EVENT_MOUSEMOVE: // 鼠标移动时
