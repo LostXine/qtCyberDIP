@@ -31,25 +31,25 @@ qtCyberDIP contains 3 + 1 parts:
 * __Game Controller__: User defined game controller, change this to play different games.
 
 ###Usage
-* Install __Visual Studio__ (≥2013)
-* Install __Qt__ and __Qt VS Add-In__
+* Install _Visual Studio_ (≥2013)
+* Install _Qt_ and _Qt VS Add-In_
 * Download and unzip / clone this project.
 * Install Driver for CH340 Chipset after connected to CyberDIP. ([Driver](/CH340) is included)
-* Add __'3rdparty/x64'__ (Default, if you are using 32-bit OS, add __'3rdparty/x86'__) into Environment Variable __'Path'__(__ATTENTION! NEVER CLEAR 'Path'__, unless you are exactly conscious of the consequence)
-* Open __qtCyberDIP.sln__ in Visual Studio and follow the instructions in __stdafx.h__
+* Add _'3rdparty/x64'_ (Default, if you are using 32-bit OS, add _'3rdparty/x86'_) into Environment Variable _'Path'_(_ATTENTION! NEVER CLEAR 'Path'_, unless you are exactly conscious of the consequence)
+* Open _qtCyberDIP.sln_ in Visual Studio and follow the instructions in _stdafx.h_
 
 ###使用方法
-* 安装__Visual Studio__ 2013或更高版本
-* 安装__Qt__与相应版本__Qt的VS插件__
+* 安装 _Visual Studio_ 2013或更高版本
+* 安装 _Qt_ 与相应版本 _Qt的VS插件_
 * 下载解压或clone本项目到本地
 * 连接CyberDIP后，安装CH340 芯片组驱动，驱动包含在[CH340](/CH340)文件夹中。
-* 将__'3rdparty/x64'__(默认x64，32位操作系统添加'__3rdprty/x86__')加入系统环境变量__'Path'__中(注意不要清空原有内容)
-* 使用VS打开工程文件__qtCyberDIP.sln__, 并按照__stdafx.h__中的说明操作
+* 将 _'3rdparty/x64'_ (默认x64，32位操作系统添加 _'3rdprty/x86'_)加入系统环境变量 _'Path'_ 中(注意不要清空原有内容)
+* 使用VS打开工程文件 _qtCyberDIP.sln_, 并按照 _stdafx.h_ 中的说明操作
 
 ***
-__请参加“数字图像处理基础”的同学特别注意:__
+__请参加“数字图像处理基础”的同学注意:__
 
-为了方便代码评阅，建议只修改__usrGameController.h__和__usrGameController.cpp__两个文件，最后使用git提交代码。
+为了方便代码评阅，建议只修改 _usrGameController.h_ 和 _usrGameController.cpp_ 两个文件，最后使用git提交代码。
 
 ***
 ###Developer
