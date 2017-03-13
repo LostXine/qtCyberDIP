@@ -1,5 +1,7 @@
 # qtCyberDIP
 ![CyberDIP](/pic/CyberDIP.JPG)
+![qtCyberDIP_COM](/pic/qtCyberDIP_COM.png)
+
 
 CyberDIP driver for windows in C++ 11.
 
@@ -31,25 +33,25 @@ qtCyberDIP contains 3 + 1 parts:
 * __Game Controller__: User defined game controller, change this to play different games.
 
 ###Usage
-* Install _Visual Studio_ (≥2013)
-* Install _Qt_ and _Qt VS Add-In_
+* Install Visual Studio (≥2013)
+* Install Qt and Qt VS Add-In
 * Download and unzip / clone this project.
 * Install Driver for CH340 Chipset after connected to CyberDIP. ([Driver](/CH340) is included)
-* Add _'3rdparty/x64'_ (Default, if you are using 32-bit OS, add _'3rdparty/x86'_) into Environment Variable _'Path'_(_ATTENTION! NEVER CLEAR 'Path'_, unless you are exactly conscious of the consequence)
-* Open _qtCyberDIP.sln_ in Visual Studio and follow the instructions in _stdafx.h_
+* Add '3rdparty/x64' (Default, if you are using 32-bit OS, add '3rdparty/x86') into Environment Variable 'Path'(__ATTENTION! NEVER CLEAR 'Path'__, unless you are exactly conscious of the consequence)
+* Open [qtCyberDip.sln](/qtCyberDip.sln) in Visual Studio and follow the instructions in [stdafx.h](qtCyberDip/stdafx.h)
 
 ###使用方法
-* 安装 _Visual Studio_ 2013或更高版本
-* 安装 _Qt_ 与相应版本 _Qt的VS插件_
+* 安装 Visual Studio 2013或更高版本
+* 安装 Qt 与相应版本的Qt-VS插件
 * 下载解压或clone本项目到本地
 * 连接CyberDIP后，安装CH340 芯片组驱动，驱动包含在[CH340](/CH340)文件夹中。
-* 将 _'3rdparty/x64'_ (默认x64，32位操作系统添加 _'3rdprty/x86'_)加入系统环境变量 _'Path'_ 中(注意不要清空原有内容)
-* 使用VS打开工程文件 _qtCyberDIP.sln_, 并按照 _stdafx.h_ 中的说明操作
+* 将 '3rdparty/x64' (默认x64，32位操作系统添加 '3rdprty/x86')加入系统环境变量 'Path' 中(注意不要清空原有内容)
+* 使用VS打开工程文件 [qtCyberDip.sln](/qtCyberDip.sln), 并按照 [stdafx.h](qtCyberDip/stdafx.h) 中的说明操作
 
 ***
 __请参加“数字图像处理基础”的同学注意:__
 
-为了方便代码评阅，建议只修改 _usrGameController.h_ 和 _usrGameController.cpp_ 两个文件，最后使用git提交代码。
+为了方便代码评阅，建议只修改 [usrGameController.h](/qtCyberDip/usrGameController.h) 和 [usrGameController.cpp](/qtCyberDip/usrGameController.cpp) 两个文件，最后使用git提交代码。
 
 ***
 ###Developer
