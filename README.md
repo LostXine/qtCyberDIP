@@ -40,22 +40,15 @@ qtCyberDIP contains 3 + 1 parts:
 
 ###使用方法
 * 安装 Visual Studio 2013或更高版本
-* 安装 Qt 与相应版本的Qt-VS插件
+* 安装 Qt 与相应版本的 Qt-VS插件
 * 下载解压或clone本项目到本地
 * 连接CyberDIP后，安装CH340 芯片组驱动，驱动包含在[CH340](/CH340)文件夹中。
 * 将 '3rdparty/x64' (默认x64，32位操作系统添加 '3rdprty/x86')加入系统环境变量 'Path' 中(注意不要清空原有内容)
 * 使用VS打开工程文件 [qtCyberDip.sln](/qtCyberDip.sln), 并按照 [stdafx.h](qtCyberDip/stdafx.h) 中的说明操作
 
-***
 __请参加“数字图像处理基础”的同学注意:__
 
 为了方便代码评阅，建议只修改 [usrGameController.h](/qtCyberDip/usrGameController.h) 和 [usrGameController.cpp](/qtCyberDip/usrGameController.cpp) 两个文件，最后使用git提交代码。
-
-***
-###ScreenShot
-![qtCyberDip_COM](/pic/qtCyberDip_COM.png)
-![qtCyberDip_bbq](/pic/qtCyberDip_bbq.png)
-![qtCyberDip_cap](/pic/qtCyberDip_cap.png)
 
 ***
 ###Developer
@@ -64,4 +57,10 @@ __请参加“数字图像处理基础”的同学注意:__
 
 ###Contact me
 * Email: lostxine@gmail.com
-* Address: Room 2#302B, SEIEE Building, 800 DongchuanRd., Shanghai, PR China (200240) 
+* Address: Room 2#302B, SEIEE Building, 800 DongchuanRd., Shanghai, PR China (200240)
+
+***
+###Screenshot
+![qtCyberDip_COM](/pic/qtCyberDip_COM.png)
+![qtCyberDip_bbq](/pic/qtCyberDip_bbq.png)
+![qtCyberDip_cap](/pic/qtCyberDip_cap.png)

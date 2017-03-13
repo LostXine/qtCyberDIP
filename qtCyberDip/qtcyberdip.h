@@ -93,6 +93,7 @@ private:
 	bool bbqServiceShouldRun;
 	bool bbqServiceStartError;
 	void bbqStartUsbService();
+	void bbqCleanADBProcess();
 	/*******串口控制相关变量与方法*******/
 	double comPosX, comPosY;
 	bool comIsDown;//电磁铁状态

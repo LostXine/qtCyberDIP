@@ -67,21 +67,22 @@ qtCyberDip::~qtCyberDip()
 void qtCyberDip::closeEvent(QCloseEvent* evt)
 {
 	Q_UNUSED(evt);
-	if (bbqADBProcess)
+	if (bbqADBProcess != nullptr)
 	{
 		disconnect(bbqADBProcess, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(bbqADBProcessFinishes()));
-		bbqADBProcess->terminate();
-		delete bbqADBProcess;
+		bbqCleanADBProcess();
 	}
-	if (bbqDebugWidget)
+	if (bbqDebugWidget != nullptr)
 	{
 		bbqDebugWidget->close();
+		delete bbqDebugWidget;
+		bbqDebugWidget = nullptr;
 	}
-	if (comSPH)
+	if (comSPH != nullptr)
 	{
 		comSPH->disConnect();
-
 		delete comSPH;
+		comSPH = nullptr;
 	}
 }
 
@@ -239,12 +240,7 @@ void qtCyberDip::bbqClickBootstrapUSB()
 	else
 	{
 		bbqServiceShouldRun = false;
-		if (bbqADBProcess)
-		{
-			bbqADBProcess->terminate();
-			bbqADBProcess->kill();
-			//qDebug() << bbqADBProcess;
-		}
+		bbqCleanADBProcess();
 	}
 }
 
@@ -275,7 +271,7 @@ void qtCyberDip::bbqADBProcessFinishes()
 			bbqServiceShouldRun = false;
 		}
 		// If the process crashed, reboot it
-		bbqStartUsbService();
+		//bbqStartUsbService();
 	}
 	else
 	{
@@ -350,9 +346,7 @@ void qtCyberDip::bbqADBErrorReadyRead()
 			bbqDebugWidget->addItem(item);
 		}
 	}
-	bbqADBProcess->terminate();
-	bbqADBProcess->kill();
-
+	bbqCleanADBProcess();
 }
 
 void qtCyberDip::bbqStartUsbService()
@@ -366,7 +360,7 @@ void qtCyberDip::bbqStartUsbService()
 	setCursor(Qt::WaitCursor);
 	qApp->processEvents();
 
-	if (!bbqADBProcess)
+	if (bbqADBProcess != nullptr)
 	{
 		bbqADBProcess = new QProcess(this);
 		connect(bbqADBProcess, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(bbqADBProcessFinishes()));
@@ -384,6 +378,7 @@ void qtCyberDip::bbqStartUsbService()
 	copyProc->waitForFinished();
 	if (bbqServiceStartError)
 	{
+		setCursor(Qt::ArrowCursor);
 		QMessageBox::critical(this, "Unable to prepare the USB service", "Unable to copy the BBQScreen service to an executable zone on your device, as it hasn't been found. Please make sure the BBQScreen app is installed, and that you opened it once, and pressed 'USB' if prompted or turned it on once.");
 		delete copyProc;
 		return;
@@ -398,6 +393,7 @@ void qtCyberDip::bbqStartUsbService()
 	chmodProc->waitForFinished();
 	if (bbqServiceStartError)
 	{
+		setCursor(Qt::ArrowCursor);
 		QMessageBox::critical(this, "Unable to prepare the USB service", "Unable to set the permissions of the BBQScreen service to executable. Please contact support.");
 		delete chmodProc;
 		return;
@@ -426,8 +422,18 @@ void qtCyberDip::bbqStartUsbService()
 	args << "-q";
 	args << QString::number(ui->bbqSpinBitrate->value());
 	args << "-i";
-
-	bbqADBProcess->start(ADB_PATH, args);
+	try
+	{
+		bbqADBProcess->start(ADB_PATH, args);
+	}
+	catch (std::exception e)
+	{
+		setCursor(Qt::ArrowCursor);
+		QMessageBox::critical(this, "bbqADBProcess->start CRITICAL", e.what());
+		delete chmodProc;
+		delete copyProc;
+		return;
+	}
 	ui->bbqConnectUSB->setEnabled(true);
 	ui->bbqBootstrapUSB->setEnabled(true);
 	ui->bbqBootstrapUSB->setText("Stop USB service");
@@ -438,28 +444,20 @@ void qtCyberDip::bbqStartUsbService()
 
 void qtCyberDip::bbqQualityChanged(int index)
 {
-	if (bbqADBProcess)
-	{
-		bbqCrashCount = 0;
-		// Restart the app
-		bbqADBProcess->terminate();
-		bbqADBProcess->kill();
-	}
+	bbqCrashCount = 0;
+	bbqCleanADBProcess();
 }
 
 void qtCyberDip::bbqBitrateChanged(int value)
 {
-	if (bbqADBProcess)
-	{
-		bbqCrashCount = 0;
-		// Restart the app
-		bbqADBProcess->terminate();
-		bbqADBProcess->kill();
-	}
+	bbqCrashCount = 0;
+	bbqCleanADBProcess();
 }
+
 void qtCyberDip::bbqClickShowDebugLog()
 {
-	if (bbqDebugWidget != nullptr) {
+	if (bbqDebugWidget != nullptr) 
+	{
 		delete bbqDebugWidget;
 	}
 	bbqDebugWidget = new QListWidget();
@@ -473,6 +471,18 @@ void qtCyberDip::bbqClickShowDebugLog()
 
 	bbqDebugWidget->show();
 
+}
+
+void qtCyberDip::bbqCleanADBProcess()
+{
+	if (bbqADBProcess != nullptr)
+	{
+		// Restart the app
+		bbqADBProcess->terminate();
+		bbqADBProcess->kill();
+		delete bbqADBProcess;
+		bbqADBProcess = nullptr;
+	}
 }
 
 void qtCyberDip::comInitPara()
@@ -911,7 +921,8 @@ void qtCyberDip::closeCV()
 	comClickRetButton();
 	if (usrGC != nullptr)
 	{
-		delete usrGC;
+		delete usrGC; //delete并不会清空指针
+		usrGC = nullptr;
 	}
 }
 
