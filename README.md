@@ -35,7 +35,7 @@ qtCyberDIP contains 3 + 1 parts:
 * Install __Qt__ and __Qt VS Add-In__
 * Download and unzip / clone this project.
 * Install Driver for CH340 Chipset after connected to CyberDIP. ([Driver](/CH340) is included)
-* Add __3rdparty/x64__ (Default, if you are using 32-bit OS, add __3rdparty/x86__) into Environment Variable 'Path'
+* Add __'3rdparty/x64'__ (Default, if you are using 32-bit OS, add __'3rdparty/x86'__) into Environment Variable __'Path'__(__ATTENTION! NEVER CLEAR 'Path'__, unless you are exactly conscious of the consequence)
 * Open __qtCyberDIP.sln__ in Visual Studio and follow the instructions in __stdafx.h__
 
 ###使用方法
@@ -43,13 +43,13 @@ qtCyberDIP contains 3 + 1 parts:
 * 安装__Qt__与相应版本__Qt的VS插件__
 * 下载解压或clone本项目到本地
 * 连接CyberDIP后，安装CH340 芯片组驱动，驱动包含在[CH340](/CH340)文件夹中。
-* 将__3rdparty/x64__(默认x64，32位操作系统添加__3rdprty/x86__)加入系统环境变量Path中
+* 将__'3rdparty/x64'__(默认x64，32位操作系统添加'__3rdprty/x86__')加入系统环境变量__'Path'__中(注意不要清空原有内容)
 * 使用VS打开工程文件__qtCyberDIP.sln__, 并按照__stdafx.h__中的说明操作
 
 ***
-__请参加“数字图像处理基础”的同学注意:__
+__请参加“数字图像处理基础”的同学特别注意:__
 
-为了方便代码评阅，建议只修改__usrGameController.h__和__usrGameController.cpp__两个文件，使用git提交代码。
+为了方便代码评阅，建议只修改__usrGameController.h__和__usrGameController.cpp__两个文件，最后使用git提交代码。
 
 ***
 ###Developer
