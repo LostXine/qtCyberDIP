@@ -355,12 +355,10 @@ void qtCyberDip::bbqStartUsbService()
 
 	ui->bbqBootstrapUSB->setEnabled(false);
 	ui->bbqBootstrapUSB->setText("Starting...");
-
-
 	setCursor(Qt::WaitCursor);
 	qApp->processEvents();
 
-	if (bbqADBProcess != nullptr)
+	if (bbqADBProcess == nullptr)
 	{
 		bbqADBProcess = new QProcess(this);
 		connect(bbqADBProcess, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(bbqADBProcessFinishes()));
@@ -378,7 +376,7 @@ void qtCyberDip::bbqStartUsbService()
 	copyProc->waitForFinished();
 	if (bbqServiceStartError)
 	{
-		setCursor(Qt::ArrowCursor);
+		bbqResetUSBAdbUI();
 		QMessageBox::critical(this, "Unable to prepare the USB service", "Unable to copy the BBQScreen service to an executable zone on your device, as it hasn't been found. Please make sure the BBQScreen app is installed, and that you opened it once, and pressed 'USB' if prompted or turned it on once.");
 		delete copyProc;
 		return;
@@ -393,7 +391,7 @@ void qtCyberDip::bbqStartUsbService()
 	chmodProc->waitForFinished();
 	if (bbqServiceStartError)
 	{
-		setCursor(Qt::ArrowCursor);
+		bbqResetUSBAdbUI();
 		QMessageBox::critical(this, "Unable to prepare the USB service", "Unable to set the permissions of the BBQScreen service to executable. Please contact support.");
 		delete chmodProc;
 		return;
@@ -422,14 +420,14 @@ void qtCyberDip::bbqStartUsbService()
 	args << "-q";
 	args << QString::number(ui->bbqSpinBitrate->value());
 	args << "-i";
-	try
+
+	if (bbqADBProcess != nullptr)
 	{
 		bbqADBProcess->start(ADB_PATH, args);
 	}
-	catch (std::exception e)
+	else
 	{
-		setCursor(Qt::ArrowCursor);
-		QMessageBox::critical(this, "bbqADBProcess->start CRITICAL", e.what());
+		bbqResetUSBAdbUI();
 		delete chmodProc;
 		delete copyProc;
 		return;
@@ -456,7 +454,7 @@ void qtCyberDip::bbqBitrateChanged(int value)
 
 void qtCyberDip::bbqClickShowDebugLog()
 {
-	if (bbqDebugWidget != nullptr) 
+	if (bbqDebugWidget != nullptr)
 	{
 		delete bbqDebugWidget;
 	}
@@ -483,6 +481,13 @@ void qtCyberDip::bbqCleanADBProcess()
 		delete bbqADBProcess;
 		bbqADBProcess = nullptr;
 	}
+}
+
+void qtCyberDip::bbqResetUSBAdbUI()
+{
+	setCursor(Qt::ArrowCursor);
+	ui->bbqBootstrapUSB->setEnabled(true);
+	ui->bbqBootstrapUSB->setText("Start USB service");
 }
 
 void qtCyberDip::comInitPara()
