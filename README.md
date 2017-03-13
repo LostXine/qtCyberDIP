@@ -1,7 +1,5 @@
 # qtCyberDIP
 ![CyberDIP](/pic/CyberDIP.JPG)
-![qtCyberDIP_COM](/pic/qtCyberDIP_COM.png)
-
 
 CyberDIP driver for windows in C++ 11.
 
@@ -52,6 +50,12 @@ qtCyberDIP contains 3 + 1 parts:
 __请参加“数字图像处理基础”的同学注意:__
 
 为了方便代码评阅，建议只修改 [usrGameController.h](/qtCyberDip/usrGameController.h) 和 [usrGameController.cpp](/qtCyberDip/usrGameController.cpp) 两个文件，最后使用git提交代码。
+
+***
+###ScreenShot
+![qtCyberDip_COM](/pic/qtCyberDip_COM.png)
+![qtCyberDip_bbq](/pic/qtCyberDip_bbq.png)
+![qtCyberDip_cap](/pic/qtCyberDip_cap.png)
 
 ***
 ###Developer
