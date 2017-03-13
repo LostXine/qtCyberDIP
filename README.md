@@ -17,11 +17,11 @@ CyberDIP是通过计算机USB控制的触摸屏点击设备，通过搭载[grbl 
 * Find solution to replace Airplayer.exe+PrintScreen
 
 ###Dependent
-* [Qt](https://www.qt.io/) >=5.7
+* [Qt](https://www.qt.io/) ≥5.7
 * [FFmpeg](https://ffmpeg.org/) 2.2.2 (included in [/3rdparty](/3rdparty))
 * [QTFFmpegWrapper](https://inqlude.org/libraries/qtffmpegwrapper.html) (included in [/qtCyberDip/QTFFmpegWrapper](/qtCyberDip/QTFFmpegWrapper))
 * [Android Debug Bridge](http://developer.android.com/tools/help/adb.html) (included in [/qtCyberDip/prebuilts](/qtCyberDip/prebuilts))
-* (Optional)[OpenCV](http://www.opencv.org/) >=2.4.9
+* (Optional)[OpenCV](http://www.opencv.org/) ≥2.4.9
 
 ###Framework
 qtCyberDIP contains 3 + 1 parts:
@@ -31,24 +31,25 @@ qtCyberDIP contains 3 + 1 parts:
 * __Game Controller__: User defined game controller, change this to play different games.
 
 ###Usage
-* Install Visual Studio (>=2013)
-* Install Qt and the Qt VS Add-In
+* Install __Visual Studio__ (≥2013)
+* Install __Qt__ and __Qt VS Add-In__
 * Download and unzip / clone this project.
-* Install Driver for CH340 Chipset after connected to CyberDIP. ([Driver](/CH340) included)
-* Add '3rdparty/x64' (Default, if you are using 32-bit OS, add '3rdparty/x86') into Environment Variable 'Path'
+* Install Driver for CH340 Chipset after connected to CyberDIP. ([Driver](/CH340) is included)
+* Add __3rdparty/x64__ (Default, if you are using 32-bit OS, add __3rdparty/x86__) into Environment Variable 'Path'
 * Open __qtCyberDIP.sln__ in Visual Studio and follow the instructions in __stdafx.h__
 
 ###使用方法
-* 安装Visual Studio 2013或更高版本
-* 安装Qt与相应版本Qt的VS插件
+* 安装__Visual Studio__ 2013或更高版本
+* 安装__Qt__与相应版本__Qt的VS插件__
 * 下载解压或clone本项目到本地
 * 连接CyberDIP后，安装CH340 芯片组驱动，驱动包含在[CH340](/CH340)文件夹中。
-* 将3rdparty/x64(默认x64，32位操作系统添加3rdprty/x86)加入系统环境变量Path中
+* 将__3rdparty/x64__(默认x64，32位操作系统添加__3rdprty/x86__)加入系统环境变量Path中
 * 使用VS打开工程文件__qtCyberDIP.sln__, 并按照__stdafx.h__中的说明操作
 
 ***
 __请参加“数字图像处理基础”的同学注意:__
-为了方便代码评阅，建议只修改__usrGameController.h__和__usrGameController.cpp__两个文件。
+
+为了方便代码评阅，建议只修改__usrGameController.h__和__usrGameController.cpp__两个文件，使用git提交代码。
 
 ***
 ###Developer
