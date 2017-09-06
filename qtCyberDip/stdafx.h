@@ -19,8 +19,8 @@
 //************************Definitions***************************//
 
 //#define VIA_OPENCV
-#define RANGE_X 61
-#define RANGE_Y 47
+#define RANGE_X 1
+#define RANGE_Y 1
 #define UP_CUT 35.0
 
 //*************************使用说明*****************************//
@@ -29,17 +29,17 @@
 //STEP0:在上方QT菜单中配置QT版本(如果没有则说明QT的VS插件安装失败)
 //STEP0:Configure QT version
 
-//STEP1: 注销掉#define VIA_OPENCV以在配置OpenCV前尝试编译本程序 编译通过后再配置OpenCV内容
+//STEP1: 注释掉#define VIA_OPENCV以在配置OpenCV前尝试编译本程序 编译通过后再配置OpenCV内容
 //STEP1: Comment #define VIA_OPENCV and build -> Test your QT and FFmpeg settings.
 
 //STEP2: 测量并定义好设备的长宽以及窗口的上边缘
 //RANGE  表示设备屏幕在CyberDIP中的尺寸
-//UP_CUT 表示Capture时减去窗口头顶的标题框的大小，仅在使用AirPlayer时使用，使用bbq的时候应设置为0.
+//UP_CUT 表示Capture时减去窗口头顶的标题框的大小，仅在使用screenCapture时使用，使用bbq的时候应设置为0.
 //STEP2: Measure the range of your device in CyberDIP.
 //RANGE  means the screen size of device in CyberDIP coordinates.
 //UP_CUT is used to chop the title of video window.
 
-//STEP3: 配置OpenCV并取消VIA_OPENCV的注释
+//STEP3: 配置OpenCV并取消VIA_OPENCV的注释 尝试编译本程序
 //STEP3: Config OpenCV and uncomment VIA_OPENCV
 
 //STEP4: 在usrGameController.h和usrGameController.cpp中修改相应的图像处理代码
