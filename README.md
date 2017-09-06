@@ -33,18 +33,25 @@ qtCyberDIP contains 3 + 1 parts:
 ### Usage
 * Install Visual Studio (≥2013)
 * Install Qt and Qt VS Add-In
-* Download and unzip / clone this project.
-* Install Driver for CH340 Chipset after connected to CyberDIP. ([Driver](/CH340) is included)
+* Install git for windows
+* Clone this project using script below at git bash:
+```
+git clone https://github.com/LostXine/qtCyberDIP.git
+```
+* (If necessary)Install Driver for CH340 Chipset after CyberDIP connected. ([Driver](/CH340) is included)
 * Add '3rdparty/x64' (Default, if you are using 32-bit OS, add '3rdparty/x86') into Environment Variable 'Path' (__ATTENTION! NEVER CLEAN 'Path'__, unless you are exactly conscious of the consequence)
 * Open [qtCyberDip.sln](/qtCyberDip.sln) in Visual Studio and follow the instructions in [stdafx.h](qtCyberDip/stdafx.h)
 
 ### 使用方法
 * 安装 Visual Studio 2013或更高版本
 * 安装 Qt 与相应版本的 Qt-VS插件
-* 下载解压或clone本项目到本地
-* 连接CyberDIP后，安装CH340 芯片组驱动，驱动包含在[CH340](/CH340)文件夹中。
+* 在一个恰当的目录中打开git bash并输入以下命令：
+```
+git clone https://github.com/LostXine/qtCyberDIP.git
+```
+* 连接CyberDIP，如有必要则安装CH340 芯片组驱动，驱动文件包含在[CH340](/CH340)文件夹中。
 * 将 '3rdparty/x64' (默认x64，32位操作系统添加 '3rdprty/x86')加入系统环境变量 'Path' 中(注意不要清空原有内容)
-* 使用VS打开工程文件 [qtCyberDip.sln](/qtCyberDip.sln), 并按照 [stdafx.h](qtCyberDip/stdafx.h) 中的说明操作
+* 使用VS打开工程文件 [qtCyberDip.sln](/qtCyberDip.sln), 并按照 [stdafx.h](qtCyberDip/stdafx.h) 中的说明继续配置
 
 __请参加“数字图像处理基础”的同学注意:__
 
