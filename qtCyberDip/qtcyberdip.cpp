@@ -764,19 +764,17 @@ void qtCyberDip::comClickHitButton()
 
 void qtCyberDip::comHitOnce()
 {
+	float delay = 0.01;
+	char cmd[32];
 	comHitDown();
 	comRequestToSend("G91");//相对坐标
 	//用不存在的Z轴实现延时功能
-	if (comFetch)
-	{
-		comRequestToSend("G1 Z-0.01 F5.");
-	}
-	else
-	{
-		comRequestToSend("G1 Z0.01 F5.");
-	}
+	sprintf_s(cmd, "G1 Z%0.3f F5.", (comFetch) ? delay : -delay);
+	comRequestToSend(cmd);
 	comFetch = !comFetch;
 	comHitUp();
+	sprintf_s(cmd, "G1 Z%0.3f F5.", (comFetch) ? delay : -delay);
+	comRequestToSend(cmd);
 }
 
 void qtCyberDip::comClickRetButton()
