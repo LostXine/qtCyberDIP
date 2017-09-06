@@ -29,7 +29,7 @@
 //STEP0:在上方QT菜单中配置QT版本(如果没有则说明QT的VS插件安装失败)
 //STEP0:Configure QT version
 
-//STEP1: 注销掉#define VIA_OPENCV以在配置OpenCV前尝试编译本程序 编译通过后再配置OpenCV内容
+//STEP1: 注释掉#define VIA_OPENCV以在配置OpenCV前尝试编译本程序 编译通过后再配置OpenCV内容
 //STEP1: Comment #define VIA_OPENCV and build -> Test your QT and FFmpeg settings.
 
 //STEP2: 测量并定义好设备的长宽以及窗口的上边缘
