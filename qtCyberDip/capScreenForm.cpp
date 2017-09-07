@@ -1,4 +1,5 @@
 #include "capScreenForm.h"
+
 #include <Windows.h>
 Q_GUI_EXPORT QImage qt_imageFromWinHBITMAP(HDC hdc, HBITMAP bitmap, int w, int h);
 
