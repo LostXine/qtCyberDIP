@@ -1,8 +1,5 @@
 #include "stdafx.h"
 #include "qtcyberdip.h"
-#include "ui_qtcyberdip.h"
-#include "bbqScreenForm.h"
-#include "capScreenForm.h"
 
 #define ADB_PATH "prebuilts/adb.exe"
 
