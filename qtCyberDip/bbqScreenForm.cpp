@@ -18,15 +18,7 @@
 
 #include "stdafx.h"
 #include "bbqScreenForm.h"
-#include "ui_bbqScreenForm.h"
-#include "qtcyberdip.h"
-#include <QByteArray>
-#include <QPainter>
-#include <QMessageBox>
-#include <QCloseEvent>
-#include <QFile>
 #include <QtNetwork/QHostAddress>
-#include <QtGui/QPixmap>
 
 #ifdef PLAT_APPLE
  #include <Carbon/Carbon.h>
@@ -39,12 +31,11 @@
 
 
 //----------------------------------------------------
-bbqScreenForm::bbqScreenForm(qtCyberDip* win, QWidget *parent) :
+bbqScreenForm::bbqScreenForm(QWidget *parent) :
 	QWidget(parent),
 	ui(new Ui::bbqScreenForm),
 	mTotalFrameReceived(0),
 	mRotationAngle(0),
-	mParentWindow(win),
 	mOrientationOffset(0),
 	mShowFps(false),
 	mStopped(false),

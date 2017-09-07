@@ -20,15 +20,9 @@
 #ifndef BBQSCREENFORM_H
 #define BBQSCREENFORM_H
 
-#include <QtWidgets/QWidget>
-#include <QtNetwork/QTcpSocket>
-#include <QTime>
-#include <QPainter>
-#include <QBuffer>
-#include <QLabel>
-#include <QtMultimedia/QMediaPlayer>
+#include "ui_bbqScreenForm.h"
 #include "QStreamDecoder.h"
-#include<iostream>
+#include <QtNetwork/QTcpSocket>
 
 #define FPS_AVERAGE_SAMPLES 50
 
@@ -58,14 +52,13 @@ namespace Ui {
 	class bbqScreenForm;
 }
 
-class qtCyberDip;
 
 class bbqScreenForm : public QWidget
 {
 	Q_OBJECT
 
 public:
-	explicit bbqScreenForm(qtCyberDip* win, QWidget *parent = 0);
+	explicit bbqScreenForm(QWidget *parent = 0);
 	~bbqScreenForm();
 
 	void connectTo(const QString& host);
@@ -110,8 +103,6 @@ private slots:
 
 private:
 	Ui::bbqScreenForm *ui;
-	qtCyberDip* mParentWindow;
-
 	QTcpSocket mTcpSocket;
 
 	// Decoders

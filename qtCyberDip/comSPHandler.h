@@ -4,8 +4,6 @@
 #include <QObject>
 #include <QtSerialPort\QtSerialPort>
 
-class qtCyberDip;
-
 class comSPHandler : public QObject
 {
 	Q_OBJECT
@@ -29,7 +27,6 @@ public slots:
 
 private:
 	QSerialPort* mSP;
-	qtCyberDip* mwin;
 	QByteArray mGlobalBytesBuffer;
 
 	bool shouldStop;
