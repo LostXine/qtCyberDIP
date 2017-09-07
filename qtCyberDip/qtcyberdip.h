@@ -77,8 +77,9 @@ private slots:
 	void processImg(QImage img);
 
 public slots:
-	void  comLogAdd(QString txt, int type);
-	void  comDeviceDelay(float delay);
+	void comLogAdd(QString txt, int type);
+	void comDeviceDelay(float delay);
+	void formClosed();
 
 private:
 	Ui::qtCyberDip *ui;

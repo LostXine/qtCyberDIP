@@ -82,16 +82,7 @@ void qtCyberDip::closeEvent(QCloseEvent* evt)
 		delete comSPH;
 		comSPH = nullptr;
 	}
-	if (capSF != nullptr)
-	{
-		delete capSF; 
-		capSF = nullptr;
-	}
-	if (bbqSF != nullptr)
-	{
-		delete bbqSF;
-		bbqSF = nullptr;
-	}
+	formClosed();
 #ifdef VIA_OPENCV
 	if (usrGC != nullptr)
 	{
@@ -385,14 +376,14 @@ void qtCyberDip::bbqStartUsbService()
 	QStringList args;
 	args << "shell";
 	args << "cp";
-	args << "/data/data/org.bbqdroid.bbqSF/files/bbqSF";
-	args << "/data/local/tmp/bbqSF";
+	args << "/data/data/org.bbqdroid.bbqscreen/files/bbqscreen";
+	args << "/data/local/tmp/bbqScreen";
 	QProcess* copyProc = bbqRunAdb(args);
 	copyProc->waitForFinished();
 	if (bbqServiceStartError)
 	{
 		bbqResetUSBAdbUI();
-		QMessageBox::critical(this, "Unable to prepare the USB service", "Unable to copy the bbqSF service to an executable zone on your device, as it hasn't been found. Please make sure the bbqSF app is installed, and that you opened it once, and pressed 'USB' if prompted or turned it on once.");
+		QMessageBox::critical(this, "Unable to prepare the USB service", "Unable to copy the bbqscreen service to an executable zone on your device, as it hasn't been found. Please make sure the bbqscreen app is installed, and that you opened it once, and pressed 'USB' if prompted or turned it on once.");
 		delete copyProc;
 		return;
 	}
@@ -401,20 +392,20 @@ void qtCyberDip::bbqStartUsbService()
 	args << "shell";
 	args << "chmod";
 	args << "755";
-	args << "/data/local/tmp/bbqSF";
+	args << "/data/local/tmp/bbqscreen";
 	QProcess* chmodProc = bbqRunAdb(args);
 	chmodProc->waitForFinished();
 	if (bbqServiceStartError)
 	{
 		bbqResetUSBAdbUI();
-		QMessageBox::critical(this, "Unable to prepare the USB service", "Unable to set the permissions of the bbqSF service to executable. Please contact support.");
+		QMessageBox::critical(this, "Unable to prepare the USB service", "Unable to set the permissions of the bbqscreen service to executable. Please contact support.");
 		delete chmodProc;
 		return;
 	}
 
 	args.clear();
 	args << "shell";
-	args << "/data/local/tmp/bbqSF";
+	args << "/data/local/tmp/bbqscreen";
 	args << "-s";
 	args << "50";
 	switch (ui->bbqCbQuality->currentIndex())
@@ -910,16 +901,32 @@ void qtCyberDip::capClickConnect()
 	usrGC = new usrGameController(this);
 	connect(capSF, SIGNAL(imgReady(QImage)), this, SLOT(processImg(QImage)));
 #endif
+	connect(capSF, SIGNAL(capFinished()), this, SLOT(formClosed()),Qt::QueuedConnection);
 	capSF->capSetHWND(capWins[index]);
-	capSF->show();
 	hide();
 	capClickClearButton();
 	setCursor(Qt::ArrowCursor);
+	capSF->show();
+	capSF->capRun();	
 }
 
 void qtCyberDip::capDoubleClickWin(QListWidgetItem* item)
 {
 	capClickConnect();
+}
+
+void qtCyberDip::formClosed()
+{
+	if (capSF != nullptr)
+	{
+		delete capSF;
+		capSF = nullptr;
+	}
+	if (bbqSF != nullptr)
+	{
+		delete bbqSF;
+		bbqSF = nullptr;
+	}
 }
 
 void qtCyberDip::processImg(QImage img)
