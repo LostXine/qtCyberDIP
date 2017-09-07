@@ -1,5 +1,5 @@
-#ifndef _CAPSCREENFORM_H_
-#define _CAPSCREENFORM_H_
+#ifndef CAPSCREENFORM_H
+#define CAPSCREENFORM_H
 
 #include "stdafx.h"
 #include "ui_capScreenForm.h"
