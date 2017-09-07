@@ -8,8 +8,6 @@
 
 #ifdef VIA_OPENCV
 #include "usrGameController.h"
-//游戏逻辑与图像识别类
-usrGameController* usrGC;
 #endif
 
 qtCyberDip::qtCyberDip(QWidget *parent) :
@@ -84,6 +82,7 @@ void qtCyberDip::closeEvent(QCloseEvent* evt)
 		delete comSPH;
 		comSPH = nullptr;
 	}
+	formClosed();
 }
 
 void qtCyberDip::timerEvent(QTimerEvent* evt)
@@ -179,17 +178,22 @@ void qtCyberDip::bbqClickConnect()
 		setCursor(Qt::ArrowCursor);
 		return;
 	}
-
+	if (bbqSF != nullptr)
+	{
+		delete bbqSF;
+		bbqSF = nullptr;
+	}
 	// The IP is valid, connect to there
-	bbqScreenForm* screen = new bbqScreenForm(this);
+	bbqSF = new bbqScreenForm(this);
 #ifdef VIA_OPENCV
 	usrGC = new usrGameController(this);
-	connect(screen, SIGNAL(imgReady(QImage)), this, SLOT(processImg(QImage)));
+	connect(bbqSF, SIGNAL(imgReady(QImage)), this, SLOT(processImg(QImage)));
 #endif
-	screen->setAttribute(Qt::WA_DeleteOnClose);
-	screen->setShowFps(ui->bbqShowFps->isChecked());
-	screen->show();
-	screen->connectTo(ui->bbqIP->text());
+	connect(bbqSF, SIGNAL(bbqFinished()), this, SLOT(formClosed()), Qt::QueuedConnection);
+	bbqSF->setAttribute(Qt::WA_DeleteOnClose);
+	bbqSF->setShowFps(ui->bbqShowFps->isChecked());
+	bbqSF->show();
+	bbqSF->connectTo(ui->bbqIP->text());
 
 	// Hide this dialog
 	hide();
@@ -371,13 +375,13 @@ void qtCyberDip::bbqStartUsbService()
 	args << "shell";
 	args << "cp";
 	args << "/data/data/org.bbqdroid.bbqscreen/files/bbqscreen";
-	args << "/data/local/tmp/bbqscreen";
+	args << "/data/local/tmp/bbqScreen";
 	QProcess* copyProc = bbqRunAdb(args);
 	copyProc->waitForFinished();
 	if (bbqServiceStartError)
 	{
 		bbqResetUSBAdbUI();
-		QMessageBox::critical(this, "Unable to prepare the USB service", "Unable to copy the BBQScreen service to an executable zone on your device, as it hasn't been found. Please make sure the BBQScreen app is installed, and that you opened it once, and pressed 'USB' if prompted or turned it on once.");
+		QMessageBox::critical(this, "Unable to prepare the USB service", "Unable to copy the bbqscreen service to an executable zone on your device, as it hasn't been found. Please make sure the bbqscreen app is installed, and that you opened it once, and pressed 'USB' if prompted or turned it on once.");
 		delete copyProc;
 		return;
 	}
@@ -392,7 +396,7 @@ void qtCyberDip::bbqStartUsbService()
 	if (bbqServiceStartError)
 	{
 		bbqResetUSBAdbUI();
-		QMessageBox::critical(this, "Unable to prepare the USB service", "Unable to set the permissions of the BBQScreen service to executable. Please contact support.");
+		QMessageBox::critical(this, "Unable to prepare the USB service", "Unable to set the permissions of the bbqscreen service to executable. Please contact support.");
 		delete chmodProc;
 		return;
 	}
@@ -885,17 +889,23 @@ void qtCyberDip::capClickConnect()
 	if (index > capWins.size() - 1 || index < 0){ return; }
 	setCursor(Qt::WaitCursor);
 	qDebug() << "Windows Handle: " << capWins[index];
-	capScreenForm* screen = new capScreenForm(this);
+	if (capSF != nullptr)
+	{
+		delete capSF;
+		capSF = nullptr;
+	}
+	capSF = new capScreenForm(this);
 #ifdef VIA_OPENCV
 	usrGC = new usrGameController(this);
-	connect(screen, SIGNAL(imgReady(QImage)), this, SLOT(processImg(QImage)));
+	connect(capSF, SIGNAL(imgReady(QImage)), this, SLOT(processImg(QImage)));
 #endif
-	screen->capSetHWND(capWins[index]);
-	screen->show();
+	connect(capSF, SIGNAL(capFinished()), this, SLOT(formClosed()),Qt::QueuedConnection);
+	capSF->capSetHWND(capWins[index]);
 	hide();
 	capClickClearButton();
-	screen->capStart();
 	setCursor(Qt::ArrowCursor);
+	capSF->show();
+	capSF->capRun();	
 }
 
 void qtCyberDip::capDoubleClickWin(QListWidgetItem* item)
@@ -903,12 +913,37 @@ void qtCyberDip::capDoubleClickWin(QListWidgetItem* item)
 	capClickConnect();
 }
 
+void qtCyberDip::formClosed()
+{
+	comClickRetButton();
+	if (capSF != nullptr)
+	{
+		this->disconnect(capSF, SIGNAL(imgReady(QImage)));
+		delete capSF;
+		capSF = nullptr;
+	}
+	if (bbqSF != nullptr)
+	{
+		this->disconnect(bbqSF, SIGNAL(imgReady(QImage)));
+		delete bbqSF;
+		bbqSF = nullptr;
+	}
+#ifdef VIA_OPENCV
+	if (usrGC != nullptr)
+	{
+		delete (usrGameController*)usrGC; //delete并不会清空指针,需要为指针指定类型才可以正确释放该实例
+		usrGC = nullptr;
+	}
+#endif
+	show();
+}
+
 void qtCyberDip::processImg(QImage img)
 {
 #ifdef VIA_OPENCV
 	if (usrGC != nullptr)
 	{
-		usrGC->usrProcessImage(QImage2cvMat(img));
+		((usrGameController*)usrGC)->usrProcessImage(QImage2cvMat(img));
 	}
 #endif
 }
@@ -934,16 +969,6 @@ cv::Mat qtCyberDip::QImage2cvMat(QImage image)
 		break;
 	}
 	return mat;
-}
-
-void qtCyberDip::closeCV()
-{
-	comClickRetButton();
-	if (usrGC != nullptr)
-	{
-		delete usrGC; //delete并不会清空指针
-		usrGC = nullptr;
-	}
 }
 
 void deviceCyberDip::comRequestToSend(QString txt)

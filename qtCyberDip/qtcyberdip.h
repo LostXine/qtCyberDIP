@@ -77,8 +77,10 @@ private slots:
 	void processImg(QImage img);
 
 public slots:
-	void  comLogAdd(QString txt, int type);
-	void  comDeviceDelay(float delay);
+	void comLogAdd(QString txt, int type);
+	void comDeviceDelay(float delay);
+	void formClosed();
+
 private:
 	Ui::qtCyberDip *ui;
 	/*******BBQ相关变量与方法*******/
@@ -90,6 +92,7 @@ private:
 	QStringList bbqADBErrorLog;
 	QListWidget* bbqDebugWidget;
 	QProcess* bbqRunAdb(const QStringList& params);
+	bbqScreenForm* bbqSF = nullptr;
 	int bbqCrashCount;
 	bool bbqServiceShouldRun;
 	bool bbqServiceStartError;
@@ -100,7 +103,7 @@ private:
 	double comPosX, comPosY;
 	bool comIsDown;//电磁铁状态
 	bool comFetch;//防止Z轴越界
-	comSPHandler* comSPH;
+	comSPHandler* comSPH = nullptr;
 	QList<QSerialPortInfo> comPorts;
 	void comUpdateUI();
 	void comUpdatePos();
@@ -120,12 +123,12 @@ private:
 	void capAddhWnd(HWND hWnd, QString nameToShow);
 	//声明回调友元
 	friend BOOL CALLBACK capEveryWindowProc(HWND hWnd, LPARAM parameter);
+	capScreenForm* capSF = nullptr;
 	/*******OPEN_CV的相关变量与方法*******/
 #ifdef VIA_OPENCV
 	cv::Mat QImage2cvMat(QImage image);
-public:
-	//加载opencv后所有窗口关闭时都会调用的方法
-	void closeCV();
+	//游戏逻辑与图像识别类
+	void* usrGC = nullptr;
 #endif
 };
 
@@ -151,3 +154,4 @@ Q_GUI_EXPORT QImage qt_imageFromWinHBITMAP(HDC hdc, HBITMAP bitmap, int w, int h
 BOOL CALLBACK capEveryWindowProc(HWND hWnd, LPARAM parameter);
 
 #endif // QTCYBERDIP_H
+
