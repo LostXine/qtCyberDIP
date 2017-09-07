@@ -31,7 +31,7 @@
 
 
 //----------------------------------------------------
-bbqScreenForm::bbqScreenForm(QWidget *parent) :
+bbqScreenForm::bbqScreenForm(void* win, QWidget *parent) :
 	QWidget(parent),
 	ui(new Ui::bbqScreenForm),
 	mTotalFrameReceived(0),

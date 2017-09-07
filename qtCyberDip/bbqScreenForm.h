@@ -58,7 +58,7 @@ class bbqScreenForm : public QWidget
 	Q_OBJECT
 
 public:
-	explicit bbqScreenForm(QWidget *parent = 0);
+	explicit bbqScreenForm(void* win, QWidget *parent = 0);
 	~bbqScreenForm();
 
 	void connectTo(const QString& host);
