@@ -83,13 +83,6 @@ void qtCyberDip::closeEvent(QCloseEvent* evt)
 		comSPH = nullptr;
 	}
 	formClosed();
-#ifdef VIA_OPENCV
-	if (usrGC != nullptr)
-	{
-		delete usrGC;
-		usrGC = nullptr;
-	}
-#endif
 }
 
 void qtCyberDip::timerEvent(QTimerEvent* evt)
@@ -185,17 +178,22 @@ void qtCyberDip::bbqClickConnect()
 		setCursor(Qt::ArrowCursor);
 		return;
 	}
-
+	if (bbqSF != nullptr)
+	{
+		delete bbqSF;
+		bbqSF = nullptr;
+	}
 	// The IP is valid, connect to there
-	bbqScreenForm* screen = new bbqScreenForm(this);
+	bbqSF = new bbqScreenForm(this);
 #ifdef VIA_OPENCV
 	usrGC = new usrGameController(this);
-	connect(screen, SIGNAL(imgReady(QImage)), this, SLOT(processImg(QImage)));
+	connect(bbqSF, SIGNAL(imgReady(QImage)), this, SLOT(processImg(QImage)));
 #endif
-	screen->setAttribute(Qt::WA_DeleteOnClose);
-	screen->setShowFps(ui->bbqShowFps->isChecked());
-	screen->show();
-	screen->connectTo(ui->bbqIP->text());
+	connect(bbqSF, SIGNAL(bbqFinished()), this, SLOT(formClosed()), Qt::QueuedConnection);
+	bbqSF->setAttribute(Qt::WA_DeleteOnClose);
+	bbqSF->setShowFps(ui->bbqShowFps->isChecked());
+	bbqSF->show();
+	bbqSF->connectTo(ui->bbqIP->text());
 
 	// Hide this dialog
 	hide();
@@ -917,16 +915,27 @@ void qtCyberDip::capDoubleClickWin(QListWidgetItem* item)
 
 void qtCyberDip::formClosed()
 {
+	comClickRetButton();
 	if (capSF != nullptr)
 	{
+		this->disconnect(capSF, SIGNAL(imgReady(QImage)));
 		delete capSF;
 		capSF = nullptr;
 	}
 	if (bbqSF != nullptr)
 	{
+		this->disconnect(bbqSF, SIGNAL(imgReady(QImage)));
 		delete bbqSF;
 		bbqSF = nullptr;
 	}
+#ifdef VIA_OPENCV
+	if (usrGC != nullptr)
+	{
+		delete (usrGameController*)usrGC; //delete并不会清空指针,需要为指针指定类型才可以正确释放该实例
+		usrGC = nullptr;
+	}
+#endif
+	show();
 }
 
 void qtCyberDip::processImg(QImage img)
@@ -960,16 +969,6 @@ cv::Mat qtCyberDip::QImage2cvMat(QImage image)
 		break;
 	}
 	return mat;
-}
-
-void qtCyberDip::closeCV()
-{
-	comClickRetButton();
-	if (usrGC != nullptr)
-	{
-		delete usrGC; //delete并不会清空指针
-		usrGC = nullptr;
-	}
 }
 
 void deviceCyberDip::comRequestToSend(QString txt)

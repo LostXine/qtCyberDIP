@@ -24,13 +24,8 @@ capScreenForm::~capScreenForm()
 
 void capScreenForm::closeEvent(QCloseEvent *evt)
 {
-	this->disconnect(SIGNAL(imgReady(QImage)));
-#ifdef VIA_OPENCV
-	mParentWindow->closeCV();
-#endif
 	shouldRun = false;
-	//QWidget::closeEvent(evt);
-	mParentWindow->show();
+	QWidget::closeEvent(evt);
 	emit capFinished();
 }
 
