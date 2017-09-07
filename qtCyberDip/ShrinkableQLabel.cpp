@@ -1,6 +1,4 @@
-#include "stdafx.h"
 #include "ShrinkableQLabel.h"
-#include "qtcyberdip.h"
 
 #include <QtGui/QPainter>
 #include <QtOpenGL/QGLWidget>
