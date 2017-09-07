@@ -701,15 +701,29 @@ void  qtCyberDip::comLogAdd(QString txt, int type = 0)
 	//0 -normal&receive
 	//1 -send
 	//2 -system
+	if (txt.length() < 1){ return; }
+	QDateTime time = QDateTime::currentDateTime();
+	QString tmp = time.toString("[hh:mm:ss.zzz] ").append(txt);
 	switch (type)
 	{
-	case 1:ui->comMainLog->append(">>" + txt + "\n"); break;
-	case 2:ui->comMainLog->append("/***   " + txt + "   ***/"); break;
+	case 1:
+		{
+			ui->comMainLog->append(">>" + txt + "\n");
+			break;
+		}
+	case 2:
+		{
+			ui->comMainLog->append("/***   " + txt + "   ***/\n");
+			break;
+		}
 	default:
-		ui->comMainLog->insertPlainText(txt);
-		break;
+		{
+			ui->comMainLog->insertPlainText(txt);
+			break;
+		}
 	}
 	ui->comMainLog->moveCursor(QTextCursor::End);
+	qDebug() << tmp;
 }
 
 void qtCyberDip::comScanPorts()
