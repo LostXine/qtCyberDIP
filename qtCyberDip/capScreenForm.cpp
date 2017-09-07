@@ -57,7 +57,13 @@ void capScreenForm::capRun()
 			int nW = wRect->right - wRect->left;
 			int nH = wRect->bottom - wRect->top;
 			isSame = (nW == width) && (nH == height);
-			BitBlt(hdcDst, 0, 0, width, height, hdc, 0, 0, SRCCOPY);
+			//BitBlt(hdcDst, 0, 0, width, height, hdc, 0, 0, SRCCOPY);
+			bool bRet = ::PrintWindow(hWnd, hdcDst, 0);
+			if (!bRet)
+			{
+				qDebug() << "PrintWindow Failed.";
+				break;
+			}
 			QImage img = qt_imageFromWinHBITMAP(hdcDst, bmpDst, width, height);
 #ifndef VIA_OPENCV
 			ui->capDisplay->setImage(img);
