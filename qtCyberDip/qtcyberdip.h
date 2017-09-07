@@ -129,9 +129,6 @@ private:
 	cv::Mat QImage2cvMat(QImage image);
 	//游戏逻辑与图像识别类
 	void* usrGC = nullptr;
-public:
-	//加载opencv后所有窗口关闭时都会调用的方法
-	void closeCV();
 #endif
 };
 
