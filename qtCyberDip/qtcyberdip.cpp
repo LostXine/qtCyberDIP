@@ -776,19 +776,22 @@ void qtCyberDip::comClickHitButton()
 	comHitOnce();
 }
 
-void qtCyberDip::comHitOnce()
+void qtCyberDip::comDeviceDelay(float delay=0.01)
 {
-	float delay = 0.01;
 	char cmd[32];
-	comHitDown();
-	comRequestToSend("G91");//相对坐标
-	//用不存在的Z轴实现延时功能
 	sprintf_s(cmd, "G1 Z%0.3f F5.", (comFetch) ? delay : -delay);
 	comRequestToSend(cmd);
 	comFetch = !comFetch;
+}
+
+void qtCyberDip::comHitOnce()
+{
+	comHitDown();
+	comRequestToSend("G91");//相对坐标
+	//用不存在的Z轴实现延时功能
+	comDeviceDelay(0.01);
 	comHitUp();
-	sprintf_s(cmd, "G1 Z%0.3f F5.", (comFetch) ? delay : -delay);
-	comRequestToSend(cmd);
+	comDeviceDelay(0.01);
 }
 
 void qtCyberDip::comClickRetButton()
@@ -972,6 +975,11 @@ void deviceCyberDip::comHitOnce()
 {
 	if (qt_ptr == nullptr) { return; }
 	qt_ptr->comHitOnce();
+}
+void deviceCyberDip::comDeviceDelay(float delay = 0.01)
+{
+	if (qt_ptr == nullptr) { return; }
+	qt_ptr->comDeviceDelay(delay);
 }
 #endif
 

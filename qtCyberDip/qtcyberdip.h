@@ -78,6 +78,7 @@ private slots:
 
 public slots:
 	void  comLogAdd(QString txt, int type);
+	void  comDeviceDelay(float delay);
 private:
 	Ui::qtCyberDip *ui;
 	/*******BBQ相关变量与方法*******/
@@ -141,6 +142,7 @@ public:
 	void comMoveToScale(double ratioX, double ratioY);
 	void comHitDown();
 	void comHitUp();
+	void comDeviceDelay(float delay);
 	void comHitOnce();
 };
 #endif
