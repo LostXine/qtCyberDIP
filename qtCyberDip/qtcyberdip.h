@@ -2,16 +2,11 @@
 #define QTCYBERDIP_H
 
 #include "stdafx.h"
-#include <QtWidgets/QMainWindow>
-#include <QtNetwork/QUdpSocket>
-#include <QtNetwork/QNetworkAccessManager>
-#include <QtNetwork/QNetworkReply>
-#include <QTime>
-#include <QListWidgetItem>
-#include <QProcess>
-#include <QtSerialPort/QSerialPort>  
-#include <QtSerialPort/QSerialPortInfo>  
+#include "ui_qtcyberdip.h"
 #include "comSPHandler.h"
+#include "bbqScreenForm.h"
+#include "capScreenForm.h"
+#include <QtNetwork/QUdpSocket>
 
 #ifdef VIA_OPENCV
 #include <opencv2\opencv.hpp>
@@ -22,9 +17,6 @@
 namespace Ui {
 	class qtCyberDip;
 }
-
-class bbqScreenForm;
-class capScreenForm;
 
 struct Device
 {
