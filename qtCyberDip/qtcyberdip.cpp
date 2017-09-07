@@ -8,8 +8,6 @@
 
 #ifdef VIA_OPENCV
 #include "usrGameController.h"
-//游戏逻辑与图像识别类
-usrGameController* usrGC;
 #endif
 
 qtCyberDip::qtCyberDip(QWidget *parent) :
@@ -84,6 +82,23 @@ void qtCyberDip::closeEvent(QCloseEvent* evt)
 		delete comSPH;
 		comSPH = nullptr;
 	}
+	if (capSF != nullptr)
+	{
+		delete capSF; 
+		capSF = nullptr;
+	}
+	if (bbqSF != nullptr)
+	{
+		delete bbqSF;
+		bbqSF = nullptr;
+	}
+#ifdef VIA_OPENCV
+	if (usrGC != nullptr)
+	{
+		delete usrGC;
+		usrGC = nullptr;
+	}
+#endif
 }
 
 void qtCyberDip::timerEvent(QTimerEvent* evt)
@@ -370,14 +385,14 @@ void qtCyberDip::bbqStartUsbService()
 	QStringList args;
 	args << "shell";
 	args << "cp";
-	args << "/data/data/org.bbqdroid.bbqscreen/files/bbqscreen";
-	args << "/data/local/tmp/bbqscreen";
+	args << "/data/data/org.bbqdroid.bbqSF/files/bbqSF";
+	args << "/data/local/tmp/bbqSF";
 	QProcess* copyProc = bbqRunAdb(args);
 	copyProc->waitForFinished();
 	if (bbqServiceStartError)
 	{
 		bbqResetUSBAdbUI();
-		QMessageBox::critical(this, "Unable to prepare the USB service", "Unable to copy the BBQScreen service to an executable zone on your device, as it hasn't been found. Please make sure the BBQScreen app is installed, and that you opened it once, and pressed 'USB' if prompted or turned it on once.");
+		QMessageBox::critical(this, "Unable to prepare the USB service", "Unable to copy the bbqSF service to an executable zone on your device, as it hasn't been found. Please make sure the bbqSF app is installed, and that you opened it once, and pressed 'USB' if prompted or turned it on once.");
 		delete copyProc;
 		return;
 	}
@@ -386,20 +401,20 @@ void qtCyberDip::bbqStartUsbService()
 	args << "shell";
 	args << "chmod";
 	args << "755";
-	args << "/data/local/tmp/bbqscreen";
+	args << "/data/local/tmp/bbqSF";
 	QProcess* chmodProc = bbqRunAdb(args);
 	chmodProc->waitForFinished();
 	if (bbqServiceStartError)
 	{
 		bbqResetUSBAdbUI();
-		QMessageBox::critical(this, "Unable to prepare the USB service", "Unable to set the permissions of the BBQScreen service to executable. Please contact support.");
+		QMessageBox::critical(this, "Unable to prepare the USB service", "Unable to set the permissions of the bbqSF service to executable. Please contact support.");
 		delete chmodProc;
 		return;
 	}
 
 	args.clear();
 	args << "shell";
-	args << "/data/local/tmp/bbqscreen";
+	args << "/data/local/tmp/bbqSF";
 	args << "-s";
 	args << "50";
 	switch (ui->bbqCbQuality->currentIndex())
@@ -885,16 +900,20 @@ void qtCyberDip::capClickConnect()
 	if (index > capWins.size() - 1 || index < 0){ return; }
 	setCursor(Qt::WaitCursor);
 	qDebug() << "Windows Handle: " << capWins[index];
-	capScreenForm* screen = new capScreenForm(this);
+	if (capSF != nullptr)
+	{
+		delete capSF;
+		capSF = nullptr;
+	}
+	capSF = new capScreenForm(this);
 #ifdef VIA_OPENCV
 	usrGC = new usrGameController(this);
-	connect(screen, SIGNAL(imgReady(QImage)), this, SLOT(processImg(QImage)));
+	connect(capSF, SIGNAL(imgReady(QImage)), this, SLOT(processImg(QImage)));
 #endif
-	screen->capSetHWND(capWins[index]);
-	screen->show();
+	capSF->capSetHWND(capWins[index]);
+	capSF->show();
 	hide();
 	capClickClearButton();
-	screen->capStart();
 	setCursor(Qt::ArrowCursor);
 }
 
@@ -908,7 +927,7 @@ void qtCyberDip::processImg(QImage img)
 #ifdef VIA_OPENCV
 	if (usrGC != nullptr)
 	{
-		usrGC->usrProcessImage(QImage2cvMat(img));
+		((usrGameController*)usrGC)->usrProcessImage(QImage2cvMat(img));
 	}
 #endif
 }
