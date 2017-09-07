@@ -40,10 +40,11 @@ public:
 	void capSetTitle(QString title);
 	void capCapturingThreading();
 	void closeEvent(QCloseEvent *evt);
+	void capRun();
 signals:
 	void imgReady(QImage img);
-public slots:
-	void capRun();
+	void capFinished();
+	
 
 private:
 	Ui::capScreenForm *ui;

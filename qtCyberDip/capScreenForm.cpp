@@ -29,8 +29,9 @@ void capScreenForm::closeEvent(QCloseEvent *evt)
 	mParentWindow->closeCV();
 #endif
 	shouldRun = false;
-	QWidget::closeEvent(evt);
+	//QWidget::closeEvent(evt);
 	mParentWindow->show();
+	emit capFinished();
 }
 
 void capScreenForm::capSetHWND(HWND wnd)
