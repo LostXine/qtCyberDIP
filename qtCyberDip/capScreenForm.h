@@ -13,7 +13,7 @@ class capScreenForm : public QWidget
 	Q_OBJECT
 
 public:
-	explicit capScreenForm(QWidget *parent = 0);
+	explicit capScreenForm(void* win, QWidget *parent = 0);
 	~capScreenForm();
 
 	void capSetHWND(HWND wnd);

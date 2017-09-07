@@ -3,7 +3,7 @@
 
 Q_GUI_EXPORT QImage qt_imageFromWinHBITMAP(HDC hdc, HBITMAP bitmap, int w, int h);
 
-capScreenForm::capScreenForm(QWidget *parent)
+capScreenForm::capScreenForm(void* win, QWidget *parent)
 	: QWidget(parent), shouldRun(false)
 {
 	ui = new Ui::capScreenForm;
