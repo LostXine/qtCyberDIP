@@ -572,13 +572,9 @@ quint32 bbqScreenForm::bytesToUInt32(const QByteArray& bytes, int offset)
 //----------------------------------------------------
 void bbqScreenForm::closeEvent(QCloseEvent *evt)
 {
-	this->disconnect(SIGNAL(imgReady(QImage)));
-#ifdef VIA_OPENCV
-	mParentWindow->closeCV();
-#endif
-	mParentWindow->show();
 	QWidget::closeEvent(evt);
 	mStopped = true;
+	emit bbqFinished();
 }
 //----------------------------------------------------
 /*

@@ -98,6 +98,7 @@ public:
 
 signals:
 	void imgReady(QImage img);
+	void bbqFinished();
 
 protected:
 	void attemptConnection();
