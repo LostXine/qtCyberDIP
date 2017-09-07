@@ -1,17 +1,16 @@
 #ifndef CAPSCREENFORM_H
 #define CAPSCREENFORM_H
 
-#include <QWidget>
+#include "stdafx.h"
 #include "ui_capScreenForm.h"
 #include "qtcyberdip.h"
 #include <iostream>
-#include <Windows.h>
 #include <QTime>
 #include <QPainter>
 #include <QBuffer>
 #include <QLabel>
 #include <QCloseEvent>
-#include "stdafx.h"
+#include <thread>
 
 #if defined(_WIN32) || defined(_WIN64)
 #define PLAT_WINDOWS
@@ -39,11 +38,12 @@ public:
 
 	void capSetHWND(HWND wnd);
 	void capSetTitle(QString title);
-	void capStart();
-
+	void capCapturingThreading();
 	void closeEvent(QCloseEvent *evt);
 signals:
 	void imgReady(QImage img);
+public slots:
+	void capRun();
 
 private:
 	Ui::capScreenForm *ui;
@@ -52,6 +52,7 @@ private:
 	bool shouldRun;
 	bool mShowFps;
 	QTime capFrameTimer;
+	QThread capThread;
 };
 
 #endif // CAPSCREENFORM_H

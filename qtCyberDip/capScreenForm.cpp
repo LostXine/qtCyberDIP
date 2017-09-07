@@ -1,4 +1,5 @@
 #include "capScreenForm.h"
+#include <Windows.h>
 
 capScreenForm::capScreenForm(qtCyberDip* win, QWidget *parent)
 	: QWidget(parent), shouldRun(false)
@@ -38,14 +39,12 @@ void capScreenForm::capSetHWND(HWND wnd)
 	this->setWindowTitle("Capture 0x" + QString::number((uint)hWnd, 16));
 }
 
-void capScreenForm::capStart()
+void capScreenForm::capRun()
 {
 	shouldRun = true;
 	while (true)
 	{
-	
 		if (!isVisible() || !ui || !shouldRun){ qDebug() << QString::number((uint)hWnd, 16) + " is not visible. "; break; }
-
 		::HDC hdc = ::GetWindowDC(hWnd);
 		::LPRECT wRect = new ::RECT();
 		if (!::GetWindowRect(hWnd, wRect)){ break; }
@@ -53,7 +52,7 @@ void capScreenForm::capStart()
 		int width = wRect->right - wRect->left;
 		int height = wRect->bottom - wRect->top;
 		::HDC hdcDst = ::CreateCompatibleDC(hdc);
-		::HBITMAP bmpDst= ::CreateCompatibleBitmap(hdc, width, height);
+		::HBITMAP bmpDst = ::CreateCompatibleBitmap(hdc, width, height);
 		::HGDIOBJ bmpHDst = ::SelectObject(hdcDst, bmpDst);
 		bool isSame = true, isAlive = true;
 		while (!(!isVisible() || !ui || !shouldRun) && isSame && isAlive)
@@ -62,13 +61,10 @@ void capScreenForm::capStart()
 			int nW = wRect->right - wRect->left;
 			int nH = wRect->bottom - wRect->top;
 			isSame = (nW == width) && (nH == height);
-		
 			BitBlt(hdcDst, 0, 0, width, height, hdc, 0, 0, SRCCOPY);
-
 			QImage img = qt_imageFromWinHBITMAP(hdcDst, bmpDst, width, height);
 #ifndef VIA_OPENCV
 			ui->capDisplay->setImage(img);
-			
 #endif
 			qApp->processEvents();
 			emit imgReady(img);
@@ -89,5 +85,5 @@ void capScreenForm::capStart()
 		}
 		break;//Ω· ¯—≠ª∑
 	}
-		close();
+	close();
 }
