@@ -150,7 +150,6 @@ public:
 };
 #endif
 
-Q_GUI_EXPORT QImage qt_imageFromWinHBITMAP(HDC hdc, HBITMAP bitmap, int w, int h);
 BOOL CALLBACK capEveryWindowProc(HWND hWnd, LPARAM parameter);
 
 #endif // QTCYBERDIP_H

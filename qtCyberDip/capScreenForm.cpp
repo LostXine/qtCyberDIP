@@ -1,7 +1,8 @@
 #include "capScreenForm.h"
 #include <Windows.h>
+Q_GUI_EXPORT QImage qt_imageFromWinHBITMAP(HDC hdc, HBITMAP bitmap, int w, int h);
 
-capScreenForm::capScreenForm(qtCyberDip* win, QWidget *parent)
+capScreenForm::capScreenForm(QWidget *parent)
 	: QWidget(parent), shouldRun(false)
 {
 	ui = new Ui::capScreenForm;
@@ -9,8 +10,6 @@ capScreenForm::capScreenForm(qtCyberDip* win, QWidget *parent)
 #ifdef VIA_OPENCV
 	resize(200, 95);
 #endif
-	mParentWindow = win;
-
 }
 
 capScreenForm::~capScreenForm()
