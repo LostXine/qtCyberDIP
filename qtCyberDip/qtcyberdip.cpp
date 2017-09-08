@@ -925,8 +925,7 @@ void qtCyberDip::vodClickPlayButton()
 		QFile mFile(path);
 		if (!mFile.exists())
 		{
-			QMessageBox::warning(NULL, "Error", "File " + path + " doesn't exist.", QMessageBox::Ok, QMessageBox::Ok);
-			qDebug() << "File " << path << " doesn't exist.";
+			errLogWin("File " + path + " doesn't exist.");
 			setCursor(Qt::ArrowCursor);
 			return;
 		}
@@ -938,6 +937,7 @@ void qtCyberDip::vodClickPlayButton()
 		vodPF->setPath(path);
 		connect(vodPF, SIGNAL(vodFinished()), this, SLOT(formCleanning()), Qt::QueuedConnection);
 		connect(vodPF, SIGNAL(imgReady(QImage)), this, SLOT(processImg(QImage)));
+		connect(vodPF, SIGNAL(vodErrLog(QString)), this, SLOT(errLogWin(QString)));
 		connect(&vodThread, SIGNAL(started()), vodPF, SLOT(vodRun()), Qt::QueuedConnection);
 		vodThread.start();
 	}
@@ -986,13 +986,16 @@ void qtCyberDip::vodUpdateUI()
 	}
 }
 
-
-
-
 void qtCyberDip::vodBrowsePath()
 {
 	QString fileName = QFileDialog::getOpenFileName(this, tr("select video:"), " ", tr("Videos(*.mp4 *.avi *.mkv);;All files(*.*)"));
 	ui->vodPathEdit->setText(fileName);
+}
+
+void qtCyberDip::errLogWin(QString err)
+{
+	qDebug() << err;
+	QMessageBox::warning(NULL, "Error", err, QMessageBox::Ok, QMessageBox::Ok);
 }
 
 void qtCyberDip::formClosed()
