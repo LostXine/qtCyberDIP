@@ -38,7 +38,7 @@ void vodPlayer::vodRun()
 	AVCodec         *pCodec;
 	int64_t start_time, pause_duration;
 
-	QByteArray ba = mPath.toLatin1();
+	QByteArray ba = mPath.toUtf8();
 
 	av_register_all();//注册所有组件
 	avformat_network_init();//初始化网络
