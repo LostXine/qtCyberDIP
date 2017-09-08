@@ -20,10 +20,10 @@ private:
 	QString mPath;
 	bool mShouldRun = false;
 	bool mPause = false;
-	ffmpeg::AVFormatContext *pFormatCtx;
-	ffmpeg::AVCodecContext  *pCodecCtx;
-	ffmpeg::AVFrame *pFrame, *pFrameRGB;
-	ffmpeg::SwsContext *img_convert_ctx;
+	ffmpeg::AVFormatContext *pFormatCtx = NULL;
+	ffmpeg::AVCodecContext  *pCodecCtx = NULL;
+	ffmpeg::AVFrame *pFrame = NULL, *pFrameRGB = NULL;
+	ffmpeg::SwsContext *img_convert_ctx = NULL;
 
 
 signals:
