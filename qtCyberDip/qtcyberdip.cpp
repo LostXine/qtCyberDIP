@@ -913,7 +913,9 @@ void qtCyberDip::capDoubleClickWin(QListWidgetItem* item)
 void qtCyberDip::vodClickBrowseButton()
 {
 	vodBrowsePath();
+	vodClickPlayButton();
 }
+
 void qtCyberDip::vodClickPlayButton()
 {
 	setCursor(Qt::WaitCursor);
@@ -938,7 +940,6 @@ void qtCyberDip::vodClickPlayButton()
 		connect(vodPF, SIGNAL(imgReady(QImage)), this, SLOT(processImg(QImage)));
 		connect(&vodThread, SIGNAL(started()), vodPF, SLOT(vodRun()), Qt::QueuedConnection);
 		vodThread.start();
-		
 	}
 	else
 	{
@@ -990,7 +991,7 @@ void qtCyberDip::vodUpdateUI()
 
 void qtCyberDip::vodBrowsePath()
 {
-	QString fileName = QFileDialog::getOpenFileName(this, tr("select video:"), " ", tr("Videos(*.mp4 *.avi)"));
+	QString fileName = QFileDialog::getOpenFileName(this, tr("select video:"), " ", tr("Videos(*.mp4 *.avi *.mkv);;All files(*.*)"));
 	ui->vodPathEdit->setText(fileName);
 }
 
