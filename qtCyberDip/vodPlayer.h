@@ -20,14 +20,16 @@ private:
 	QString mPath;
 	bool mShouldRun = false;
 	bool mPause = false;
-	ffmpeg::AVFormatContext *pFormatCtx;
-	ffmpeg::AVCodecContext  *pCodecCtx;
-	ffmpeg::AVFrame *pFrame, *pFrameRGB;
-	ffmpeg::SwsContext *img_convert_ctx;
+	int64_t frame_num = 0;
+	ffmpeg::AVFormatContext *pFormatCtx = nullptr;
+	ffmpeg::AVCodecContext  *pCodecCtx = nullptr;
+	ffmpeg::AVFrame *pFrame = nullptr, *pFrameRGB = nullptr;
+	ffmpeg::SwsContext *img_convert_ctx = nullptr;
 
 
 signals:
 	void imgReady(QImage img);
+	void vodErrLog(QString err);
 	void vodFinished();
 
 public slots:

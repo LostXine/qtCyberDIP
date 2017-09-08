@@ -71,6 +71,7 @@ private slots:
 	void vodClickPlayButton();
 	void vodClickPauseButton();
 	void processImg(QImage img);
+	void errLogWin(QString err);
 
 public slots:
 	void comLogAdd(QString txt, int type);
