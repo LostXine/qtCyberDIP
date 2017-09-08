@@ -923,6 +923,7 @@ void qtCyberDip::vodClickPlayButton()
 		QFile mFile(path);
 		if (!mFile.exists())
 		{
+			QMessageBox::warning(NULL, "Error", "File " + path + " doesn't exist.", QMessageBox::Ok, QMessageBox::Ok);
 			qDebug() << "File " << path << " doesn't exist.";
 			setCursor(Qt::ArrowCursor);
 			return;
