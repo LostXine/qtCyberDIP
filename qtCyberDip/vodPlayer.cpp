@@ -43,11 +43,13 @@ void vodPlayer::vodRun()
 	avformat_network_init();//初始化网络
 	pFormatCtx = avformat_alloc_context();//初始化一个AVFormatContext
 	if (avformat_open_input(&pFormatCtx, ba.data(), NULL, NULL) != 0){//打开输入的视频文件
+		QMessageBox::warning(NULL, "Error", "Couldn't open input stream.", QMessageBox::Ok, QMessageBox::Ok);
 		qDebug() << "Couldn't open input stream.";
 		emit vodFinished();
 		return;
 	}
 	if (avformat_find_stream_info(pFormatCtx, NULL) < 0){//获取视频文件信息
+		QMessageBox::warning(NULL, "Error", "Couldn't find stream information.", QMessageBox::Ok, QMessageBox::Ok);
 		qDebug() << "Couldn't find stream information.";
 		emit vodFinished();
 		return;
@@ -60,6 +62,7 @@ void vodPlayer::vodRun()
 		}
 
 	if (videoindex == -1){
+		QMessageBox::warning(NULL, "Error", "Didn't find a video stream.", QMessageBox::Ok, QMessageBox::Ok);
 		qDebug() << "Didn't find a video stream.";
 		emit vodFinished();
 		return;
@@ -68,11 +71,13 @@ void vodPlayer::vodRun()
 	pCodecCtx = pFormatCtx->streams[videoindex]->codec;
 	pCodec = avcodec_find_decoder(pCodecCtx->codec_id);//查找解码器
 	if (pCodec == NULL){
+		QMessageBox::warning(NULL, "Error", "Codec not found.", QMessageBox::Ok, QMessageBox::Ok);
 		qDebug() << "Codec not found.";
 		emit vodFinished();
 		return;
 	}
 	if (avcodec_open2(pCodecCtx, pCodec, NULL) < 0){//打开解码器
+		QMessageBox::warning(NULL, "Error", "Could not open codec.", QMessageBox::Ok, QMessageBox::Ok);
 		qDebug() << "Could not open codec.";
 		emit vodFinished();
 		return;
@@ -106,6 +111,7 @@ void vodPlayer::vodRun()
 			if (packet->stream_index == videoindex){
 				ret = avcodec_decode_video2(pCodecCtx, pFrame, &got_picture, packet);//解码一帧压缩数据
 				if (ret < 0){
+					QMessageBox::warning(NULL, "Error", "Decode Error.", QMessageBox::Ok, QMessageBox::Ok);
 					qDebug("Decode Error.");
 					emit vodFinished();
 					return;
