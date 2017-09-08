@@ -6,6 +6,7 @@
 #include "comSPHandler.h"
 #include "bbqScreenForm.h"
 #include "capScreenForm.h"
+#include "vodPlayer.h"
 #include <QtNetwork/QUdpSocket>
 
 #ifdef VIA_OPENCV
@@ -66,12 +67,16 @@ private slots:
 	void capClickScanButton();
 	void capClickConnect();
 	void capDoubleClickWin(QListWidgetItem* item);
+	void vodClickBrowseButton();
+	void vodClickPlayButton();
+	void vodClickPauseButton();
 	void processImg(QImage img);
 
 public slots:
 	void comLogAdd(QString txt, int type);
 	void comDeviceDelay(float delay);
-	void formClosed();
+	void formClosed();//清理并显示主窗口
+	void formCleanning();//只清理，不显示主窗口
 
 private:
 	Ui::qtCyberDip *ui;
@@ -116,6 +121,11 @@ private:
 	//声明回调友元
 	friend BOOL CALLBACK capEveryWindowProc(HWND hWnd, LPARAM parameter);
 	capScreenForm* capSF = nullptr;
+	/*******录像读取的相关变量与方法*******/
+	void vodBrowsePath();
+	void vodUpdateUI();
+	vodPlayer* vodPF = nullptr;
+	QThread vodThread;
 	/*******OPEN_CV的相关变量与方法*******/
 #ifdef VIA_OPENCV
 	cv::Mat QImage2cvMat(QImage image);

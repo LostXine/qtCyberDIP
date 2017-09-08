@@ -101,6 +101,15 @@
     <ClCompile Include="usrGameController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_vodPlayer.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_vodPlayer.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="vodPlayer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="qtcyberdip.h">
@@ -131,6 +140,9 @@
       <Filter>Header Files</Filter>
     </CustomBuild>
     <CustomBuild Include="ShrinkableQLabel.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="vodPlayer.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
   </ItemGroup>
