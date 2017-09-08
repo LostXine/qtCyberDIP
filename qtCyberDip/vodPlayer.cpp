@@ -8,11 +8,11 @@ vodPlayer::vodPlayer(){}
 
 vodPlayer::~vodPlayer()
 {
-	sws_freeContext(img_convert_ctx);
-	av_frame_free(&pFrameRGB);
-	av_frame_free(&pFrame);
-	avcodec_close(pCodecCtx);
-	avformat_close_input(&pFormatCtx);
+	if (img_convert_ctx != nullptr){ sws_freeContext(img_convert_ctx); }
+	if (pFrameRGB != nullptr){ av_frame_free(&pFrameRGB); }
+	if (pFrame != nullptr){ av_frame_free(&pFrame); }
+	if (pCodecCtx != nullptr){ avcodec_close(pCodecCtx); }
+	if (pFormatCtx != nullptr){ avformat_close_input(&pFormatCtx); }
 }
 
 int vodPlayer::setPath(QString& path)
@@ -39,7 +39,6 @@ void vodPlayer::vodRun()
 	int64_t start_time, pause_duration;
 
 	QByteArray ba = mPath.toUtf8();
-
 	av_register_all();//注册所有组件
 	avformat_network_init();//初始化网络
 	pFormatCtx = avformat_alloc_context();//初始化一个AVFormatContext
@@ -93,6 +92,7 @@ void vodPlayer::vodRun()
 
 	start_time = GetTickCount();
 	pause_duration = 0;
+	frame_num = 0;
 	while (mShouldRun){//读取一帧压缩数据
 		if (mPause)
 		{
@@ -121,7 +121,8 @@ void vodPlayer::vodRun()
 					{
 						memcpy(mLastFrame.scanLine(y), pFrameRGB->data[0] + y*pFrameRGB->linesize[0], pCodecCtx->width * 3);
 					}
-
+					frame_num++;
+					qDebug("Succeed to decode No.%05d frame!",frame_num);
 					AVRational time_base = pFormatCtx->streams[videoindex]->time_base;
 					AVRational time_base_q = { 1, AV_TIME_BASE };
 					int64_t pts_time = av_rescale_q(packet->dts, time_base, time_base_q);
@@ -129,7 +130,7 @@ void vodPlayer::vodRun()
 					if (pts_time > now_time){ QThread::usleep(pts_time - now_time); }
 
 					emit imgReady(mLastFrame);
-					qDebug("Succeed to decode 1 frame!");
+					
 				}
 			}
 			ffmpeg::av_free_packet(packet);
@@ -163,13 +164,14 @@ void vodPlayer::vodRun()
 		{
 			memcpy(mLastFrame.scanLine(y), pFrameRGB->data[0] + y*pFrameRGB->linesize[0], pCodecCtx->width * 3);
 		}
+		frame_num++;
+		qDebug("Flush Decoder: Succeed to decode No.%05d frame!", frame_num);
 		AVRational time_base = pFormatCtx->streams[videoindex]->time_base;
 		AVRational time_base_q = { 1, AV_TIME_BASE };
 		int64_t pts_time = av_rescale_q(packet->dts, time_base, time_base_q);
 		int64_t now_time = (GetTickCount() - start_time - pause_duration) * 1000;
 		if (pts_time > now_time){ QThread::usleep(pts_time - now_time); }
 		emit imgReady(mLastFrame);
-		qDebug("Flush Decoder: Succeed to decode 1 frame!");
 	}
 	emit vodFinished();
 }
