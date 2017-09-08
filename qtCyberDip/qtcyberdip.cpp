@@ -43,7 +43,9 @@ comSPH(nullptr), comPosX(0), comPosY(0), comIsDown(false), comFetch(false)
 	connect(ui->capScanButton, SIGNAL(clicked()), this, SLOT(capClickScanButton()));
 	connect(ui->capStartButton, SIGNAL(clicked()), this, SLOT(capClickConnect()));
 	connect(ui->capList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(capDoubleClickWin(QListWidgetItem*)));
-
+	connect(ui->vodBrowseButton, SIGNAL(clicked()), this, SLOT(vodClickBrowseButton()));
+	connect(ui->vodPlayButton, SIGNAL(clicked()), this, SLOT(vodClickPlayButton()));
+	connect(ui->vodPauseButton, SIGNAL(clicked()), this, SLOT(vodClickPauseButton()));
 	comUpdatePos();
 
 	//监听子控件事件
@@ -79,7 +81,7 @@ void qtCyberDip::closeEvent(QCloseEvent* evt)
 		delete comSPH;
 		comSPH = nullptr;
 	}
-	formClosed();
+	formCleanning();
 }
 
 void qtCyberDip::timerEvent(QTimerEvent* evt)
@@ -178,7 +180,6 @@ void qtCyberDip::bbqClickConnect()
 	if (bbqSF != nullptr)
 	{
 		delete bbqSF;
-		bbqSF = nullptr;
 	}
 	// The IP is valid, connect to there
 	bbqSF = new bbqScreenForm(this);
@@ -708,20 +709,20 @@ void  qtCyberDip::comLogAdd(QString txt, int type = 0)
 	switch (type)
 	{
 	case 1:
-		{
-			ui->comMainLog->append(">>" + txt + "\n");
-			break;
-		}
+	{
+		ui->comMainLog->append(">>" + txt + "\n");
+		break;
+	}
 	case 2:
-		{
-			ui->comMainLog->append("/***   " + txt + "   ***/\n");
-			break;
-		}
+	{
+		ui->comMainLog->append("/***   " + txt + "   ***/\n");
+		break;
+	}
 	default:
-		{
-			ui->comMainLog->insertPlainText(txt);
-			break;
-		}
+	{
+		ui->comMainLog->insertPlainText(txt);
+		break;
+	}
 	}
 	ui->comMainLog->moveCursor(QTextCursor::End);
 	qDebug() << tmp;
@@ -777,7 +778,7 @@ void qtCyberDip::comClickHitButton()
 	comHitOnce();
 }
 
-void qtCyberDip::comDeviceDelay(float delay=0.01)
+void qtCyberDip::comDeviceDelay(float delay = 0.01)
 {
 	char cmd[32];
 	sprintf_s(cmd, "G1 Z%0.3f F5.", (comFetch) ? delay : -delay);
@@ -889,20 +890,19 @@ void qtCyberDip::capClickConnect()
 	if (capSF != nullptr)
 	{
 		delete capSF;
-		capSF = nullptr;
 	}
 	capSF = new capScreenForm(this);
 #ifdef VIA_OPENCV
 	usrGC = new usrGameController(this);
 	connect(capSF, SIGNAL(imgReady(QImage)), this, SLOT(processImg(QImage)));
 #endif
-	connect(capSF, SIGNAL(capFinished()), this, SLOT(formClosed()),Qt::QueuedConnection);
+	connect(capSF, SIGNAL(capFinished()), this, SLOT(formClosed()), Qt::QueuedConnection);
 	capSF->capSetHWND(capWins[index]);
 	hide();
 	capClickClearButton();
 	setCursor(Qt::ArrowCursor);
 	capSF->show();
-	capSF->capRun();	
+	capSF->capRun();
 }
 
 void qtCyberDip::capDoubleClickWin(QListWidgetItem* item)
@@ -910,9 +910,98 @@ void qtCyberDip::capDoubleClickWin(QListWidgetItem* item)
 	capClickConnect();
 }
 
+void qtCyberDip::vodClickBrowseButton()
+{
+	vodBrowsePath();
+}
+void qtCyberDip::vodClickPlayButton()
+{
+	setCursor(Qt::WaitCursor);
+	if (vodPF == nullptr)
+	{
+		QString path = ui->vodPathEdit->text();
+		QFile mFile(path);
+		if (!mFile.exists())
+		{
+			qDebug() << "File " << path << " doesn't exist.";
+			setCursor(Qt::ArrowCursor);
+			return;
+		}
+		vodPF = new vodPlayer();
+#ifdef VIA_OPENCV
+		usrGC = new usrGameController(this);
+#endif
+		vodPF->moveToThread(&vodThread);
+		vodPF->setPath(path);
+		connect(vodPF, SIGNAL(vodFinished()), this, SLOT(formCleanning()), Qt::QueuedConnection);
+		connect(vodPF, SIGNAL(imgReady(QImage)), this, SLOT(processImg(QImage)));
+		connect(&vodThread, SIGNAL(started()), vodPF, SLOT(vodRun()), Qt::QueuedConnection);
+		vodThread.start();
+		
+	}
+	else
+	{
+		vodPF->vodStop();
+		vodThread.quit();
+		vodThread.wait();
+	}
+	setCursor(Qt::ArrowCursor);
+	vodUpdateUI();
+}
+
+void qtCyberDip::vodClickPauseButton()
+{
+	if (vodPF != nullptr)
+	{
+		vodPF->vodSwitchPause();
+	}
+	vodUpdateUI();
+}
+
+void qtCyberDip::vodUpdateUI()
+{
+	if (vodPF == nullptr)
+	{
+		ui->vodPathEdit->setEnabled(true);
+		ui->vodBrowseButton->setEnabled(true);
+		ui->vodPauseButton->setEnabled(false);
+		ui->vodPlayButton->setText("Play");
+	}
+	else
+	{
+		ui->vodPathEdit->setEnabled(false);
+		ui->vodBrowseButton->setEnabled(false);
+		ui->vodPauseButton->setEnabled(true);
+		ui->vodPlayButton->setText("Stop");
+		if (vodPF->vodGetPause())
+		{
+			ui->vodPauseButton->setText("Resume");
+		}
+		else
+		{
+			ui->vodPauseButton->setText("Pause");
+		}
+	}
+}
+
+
+
+
+void qtCyberDip::vodBrowsePath()
+{
+	QString fileName = QFileDialog::getOpenFileName(this, tr("select video:"), " ", tr("Videos(*.mp4 *.avi)"));
+	ui->vodPathEdit->setText(fileName);
+}
+
 void qtCyberDip::formClosed()
 {
 	comClickRetButton();
+	formCleanning();
+	show();
+}
+
+void qtCyberDip::formCleanning()
+{
 	if (capSF != nullptr)
 	{
 		this->disconnect(capSF, SIGNAL(imgReady(QImage)));
@@ -925,6 +1014,19 @@ void qtCyberDip::formClosed()
 		delete bbqSF;
 		bbqSF = nullptr;
 	}
+	if (vodPF != nullptr)
+	{
+		this->disconnect(vodPF, SIGNAL(imgReady(QImage)));
+		vodPF->vodStop();
+		if (vodThread.isRunning())
+		{
+			vodThread.exit();
+			vodThread.wait();
+		}
+		delete vodPF;
+		vodPF = nullptr;
+	}
+	vodUpdateUI();
 #ifdef VIA_OPENCV
 	if (usrGC != nullptr)
 	{
@@ -932,11 +1034,15 @@ void qtCyberDip::formClosed()
 		usrGC = nullptr;
 	}
 #endif
-	show();
 }
 
 void qtCyberDip::processImg(QImage img)
 {
+	QObject* ptr = QObject::sender();
+	if (ptr == vodPF)
+	{
+		ui->vodDisplay->setImage(img);
+	}
 #ifdef VIA_OPENCV
 	if (usrGC != nullptr)
 	{
