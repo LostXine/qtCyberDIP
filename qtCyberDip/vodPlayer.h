@@ -29,6 +29,7 @@ private:
 
 signals:
 	void imgReady(QImage img);
+	void vodErrLog(QString err);
 	void vodFinished();
 
 public slots:
