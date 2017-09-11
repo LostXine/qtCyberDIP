@@ -18,6 +18,7 @@ public:
 
 	void capSetHWND(HWND wnd);
 	void capSetTitle(QString title);
+	void capSetScaleRatio(QString scale);
 	void capCapturingThreading();
 	void closeEvent(QCloseEvent *evt);
 	void capRun();
@@ -30,6 +31,7 @@ private:
 	HWND hWnd;
 	bool shouldRun;
 	bool mShowFps;
+	float ratio = 1.0;
 	QTime capFrameTimer;
 };
 

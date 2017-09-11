@@ -117,6 +117,7 @@ private:
 	friend class deviceCyberDip;	//声明友元
 	/*******屏幕捕捉相关变量与方法*******/
 	QList<HWND> capWins;
+	void capInitScale();
 	//扫描添加窗口
 	void capAddhWnd(HWND hWnd, QString nameToShow);
 	//声明回调友元
