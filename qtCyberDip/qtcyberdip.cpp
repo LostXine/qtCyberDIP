@@ -46,6 +46,8 @@ comSPH(nullptr), comPosX(0), comPosY(0), comIsDown(false), comFetch(false)
 	connect(ui->vodBrowseButton, SIGNAL(clicked()), this, SLOT(vodClickBrowseButton()));
 	connect(ui->vodPlayButton, SIGNAL(clicked()), this, SLOT(vodClickPlayButton()));
 	connect(ui->vodPauseButton, SIGNAL(clicked()), this, SLOT(vodClickPauseButton()));
+
+	capInitScale();//ComboBox初始化
 	comUpdatePos();
 
 	//监听子控件事件
@@ -853,6 +855,16 @@ void qtCyberDip::capClickScanButton()
 	EnumWindows(capEveryWindowProc, (LPARAM) this);
 }
 
+void qtCyberDip::capInitScale()
+{
+	ui->capScaleBox->addItem(QString("100%"));
+	ui->capScaleBox->addItem(QString("125%"));
+	ui->capScaleBox->addItem(QString("150%"));
+	ui->capScaleBox->addItem(QString("175%"));
+	ui->capScaleBox->addItem(QString("200%"));
+	ui->capScaleBox->setCurrentIndex(0);
+}
+
 void qtCyberDip::capAddhWnd(HWND hWnd, QString nameToShow)
 {
 	capWins.push_back(hWnd);
@@ -897,6 +909,7 @@ void qtCyberDip::capClickConnect()
 	connect(capSF, SIGNAL(imgReady(QImage)), this, SLOT(processImg(QImage)));
 #endif
 	connect(capSF, SIGNAL(capFinished()), this, SLOT(formClosed()), Qt::QueuedConnection);
+	capSF->capSetScaleRatio(ui->capScaleBox->currentText());
 	capSF->capSetHWND(capWins[index]);
 	hide();
 	capClickClearButton();

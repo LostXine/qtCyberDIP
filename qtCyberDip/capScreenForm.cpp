@@ -35,6 +35,20 @@ void capScreenForm::capSetHWND(HWND wnd)
 	this->setWindowTitle("Capture 0x" + QString::number((uint)hWnd, 16));
 }
 
+void capScreenForm::capSetScaleRatio(QString scale)
+{
+	QRegExp rx("(\\d+)");  // Æ¥ÅäÊý×Ö
+	if (rx.indexIn(scale) >= 0)
+	{
+		ratio = rx.cap(0).toFloat() / 100;;
+	}
+	else
+	{
+		qDebug() << "Cannot find ratio :" << scale << ". Set to default: 100%";
+		ratio = 1.0;
+	}
+}
+
 void capScreenForm::capRun()
 {
 	shouldRun = true;
@@ -44,9 +58,9 @@ void capScreenForm::capRun()
 		::HDC hdc = ::GetWindowDC(hWnd);
 		::LPRECT wRect = new ::RECT();
 		if (!::GetWindowRect(hWnd, wRect)){ break; }
-		qDebug() << "Windows Info:\n Left:" << wRect->left << " Right:" << wRect->right << " Top:" << wRect->top << " Bottom" << wRect->bottom;
-		int width = wRect->right - wRect->left;
-		int height = wRect->bottom - wRect->top;
+		qDebug("Windows Info:\n Left:%d, Right:%d, Top:%d, Bottom:%d\nRatio:%0.2f", wRect->left, wRect->right, wRect->top, wRect->bottom, ratio);
+		int width = (wRect->right - wRect->left) / ratio;
+		int height = (wRect->bottom - wRect->top) / ratio;
 		::HDC hdcDst = ::CreateCompatibleDC(hdc);
 		::HBITMAP bmpDst = ::CreateCompatibleBitmap(hdc, width, height);
 		::HGDIOBJ bmpHDst = ::SelectObject(hdcDst, bmpDst);
@@ -54,8 +68,8 @@ void capScreenForm::capRun()
 		while (!(!ui || !shouldRun) && isSame && isAlive)
 		{
 			isAlive = ::GetWindowRect(hWnd, wRect);
-			int nW = wRect->right - wRect->left;
-			int nH = wRect->bottom - wRect->top;
+			int nW = (wRect->right - wRect->left) / ratio;
+			int nH = (wRect->bottom - wRect->top) / ratio;
 			isSame = (nW == width) && (nH == height);
 			BitBlt(hdcDst, 0, 0, width, height, hdc, 0, 0, SRCCOPY);
 			QImage img = qt_imageFromWinHBITMAP(hdcDst, bmpDst, width, height);
