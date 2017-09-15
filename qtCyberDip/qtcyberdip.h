@@ -67,6 +67,7 @@ private slots:
 	void capClickScanButton();
 	void capClickConnect();
 	void capDoubleClickWin(QListWidgetItem* item);
+	void capHandleChanged(int p);
 	void vodClickBrowseButton();
 	void vodClickPlayButton();
 	void vodClickPauseButton();
