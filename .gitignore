@@ -3,6 +3,7 @@
 /Debug/*
 /Release/*
 /qtCyberDip/GeneratedFiles/*
+/qtCyberDip/*.user
 *.sdf
 *.opensdf
 *.suo
