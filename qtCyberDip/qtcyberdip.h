@@ -124,7 +124,7 @@ private:
 	friend BOOL CALLBACK capEveryWindowProc(HWND hWnd, LPARAM parameter);
 	capScreenForm* capSF = nullptr;
 	/*******录像读取的相关变量与方法*******/
-	void vodBrowsePath();
+	int vodBrowsePath();
 	void vodUpdateUI();
 	vodPlayer* vodPF = nullptr;
 	QThread vodThread;
