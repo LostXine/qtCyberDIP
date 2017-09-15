@@ -43,6 +43,7 @@ comSPH(nullptr), comPosX(0), comPosY(0), comIsDown(false), comFetch(false)
 	connect(ui->capScanButton, SIGNAL(clicked()), this, SLOT(capClickScanButton()));
 	connect(ui->capStartButton, SIGNAL(clicked()), this, SLOT(capClickConnect()));
 	connect(ui->capList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(capDoubleClickWin(QListWidgetItem*)));
+	connect(ui->capList, SIGNAL(currentRowChanged(int)), this, SLOT(capHandleChanged(int)));
 	connect(ui->vodBrowseButton, SIGNAL(clicked()), this, SLOT(vodClickBrowseButton()));
 	connect(ui->vodPlayButton, SIGNAL(clicked()), this, SLOT(vodClickPlayButton()));
 	connect(ui->vodPauseButton, SIGNAL(clicked()), this, SLOT(vodClickPauseButton()));
@@ -845,6 +846,7 @@ void qtCyberDip::comHitUp()
 void qtCyberDip::capClickClearButton()
 {
 	ui->capList->clear();
+	ui->capHandleEdit->setText("");
 	capWins.clear();
 }
 
@@ -859,7 +861,13 @@ void qtCyberDip::capClickScanButton()
 		capHandleFilter(hd);
 		hd = GetNextWindow(hd, GW_HWNDNEXT);
 	}
-	//EnumWindows(capEveryWindowProc, (LPARAM) this);
+}
+
+void qtCyberDip::capHandleChanged(int p)
+{
+	if (p > capWins.size() - 1 || p < 0){ return; }
+	HWND hd = capWins[p];
+	ui->capHandleEdit->setText(QString::number((uint)hd, 16));
 }
 
 void qtCyberDip::capInitScale()
@@ -919,11 +927,9 @@ void qtCyberDip::capHandleFilter(HWND hWnd)
 
 void qtCyberDip::capClickConnect()
 {
-
-	int index = ui->capList->currentRow();
-	if (index > capWins.size() - 1 || index < 0){ return; }
 	setCursor(Qt::WaitCursor);
-	qDebug() << "Windows Handle: " << capWins[index];
+	QString handle = ui->capHandleEdit->text();
+	qDebug() << "Windows Handle: " << handle;
 	if (capSF != nullptr)
 	{
 		delete capSF;
@@ -935,7 +941,7 @@ void qtCyberDip::capClickConnect()
 #endif
 	connect(capSF, SIGNAL(capFinished()), this, SLOT(formClosed()), Qt::QueuedConnection);
 	capSF->capSetScaleRatio(ui->capScaleBox->currentText());
-	capSF->capSetHWND(capWins[index]);
+	capSF->capSetHWND((HWND)handle.toInt(0,16));
 	hide();
 	capClickClearButton();
 	setCursor(Qt::ArrowCursor);
