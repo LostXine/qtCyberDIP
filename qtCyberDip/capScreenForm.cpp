@@ -52,24 +52,24 @@ void capScreenForm::capSetScaleRatio(QString scale)
 void capScreenForm::capRun()
 {
 	shouldRun = true;
+	::RECT wRect;
 	while (true)
 	{
 		if (!ui || !shouldRun){ qDebug() << QString::number((uint)hWnd, 16) + " is not visible. "; break; }
 		::HDC hdc = ::GetWindowDC(hWnd);
-		::LPRECT wRect = new ::RECT();
-		if (!::GetWindowRect(hWnd, wRect)){ break; }
-		qDebug("Windows Info:\n Left:%d, Right:%d, Top:%d, Bottom:%d\nRatio:%0.2f", wRect->left, wRect->right, wRect->top, wRect->bottom, ratio);
-		int width = (wRect->right - wRect->left) / ratio;
-		int height = (wRect->bottom - wRect->top) / ratio;
+		if (!::GetWindowRect(hWnd, &wRect)){ break; }
+		qDebug("Windows Info:\n Left:%d, Right:%d, Top:%d, Bottom:%d\nRatio:%0.2f", wRect.left, wRect.right, wRect.top, wRect.bottom, ratio);
+		int width = (wRect.right - wRect.left) / ratio;
+		int height = (wRect.bottom - wRect.top) / ratio;
 		::HDC hdcDst = ::CreateCompatibleDC(hdc);
 		::HBITMAP bmpDst = ::CreateCompatibleBitmap(hdc, width, height);
 		::HGDIOBJ bmpHDst = ::SelectObject(hdcDst, bmpDst);
 		bool isSame = true, isAlive = true;
 		while (!(!ui || !shouldRun) && isSame && isAlive)
 		{
-			isAlive = ::GetWindowRect(hWnd, wRect);
-			int nW = (wRect->right - wRect->left) / ratio;
-			int nH = (wRect->bottom - wRect->top) / ratio;
+			isAlive = ::GetWindowRect(hWnd, &wRect);
+			int nW = (wRect.right - wRect.left) / ratio;
+			int nH = (wRect.bottom - wRect.top) / ratio;
 			isSame = (nW == width) && (nH == height);
 			BitBlt(hdcDst, 0, 0, width, height, hdc, 0, 0, SRCCOPY);
 			QImage img = qt_imageFromWinHBITMAP(hdcDst, bmpDst, width, height);
@@ -83,7 +83,7 @@ void capScreenForm::capRun()
 		::ReleaseDC(hWnd, hdc);
 		::DeleteObject(bmpDst);
 		//如果是窗口关闭/窗口折叠导致的记得删去那个窗口
-		if (!isAlive || wRect->right < wRect->left || wRect->top > wRect->bottom)
+		if (!isAlive || wRect.right < wRect.left || wRect.top > wRect.bottom)
 		{
 			qDebug() << QString::number((uint)hWnd, 16) + " Disappeared.";
 			shouldRun = false;
