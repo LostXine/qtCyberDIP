@@ -867,7 +867,8 @@ void qtCyberDip::capHandleChanged(int p)
 {
 	if (p > capWins.size() - 1 || p < 0){ return; }
 	HWND hd = capWins[p];
-	ui->capHandleEdit->setText(QString::number((uint)hd, 16));
+	QString handle = QString("%1").arg((uint)hd, 8, 16, QChar('0'));
+	ui->capHandleEdit->setText(handle);
 }
 
 void qtCyberDip::capInitScale()
@@ -921,7 +922,7 @@ void qtCyberDip::capHandleFilter(HWND hWnd)
 		if (IsWindowVisible(hParent)){ return; }
 	}
 	//if (wcslen(szCaption) <= 0){ return true; }
-	capAddhWnd(hWnd, "0x" + QString::number((uint)hWnd, 16) + "  " + text + " [" + cname.append("]"), target);
+	capAddhWnd(hWnd, QString("0x%1").arg((uint)hWnd, 8, 16, QChar('0')) + "  " + text + " [" + cname.append("]"), target);
 	return;
 }
 
