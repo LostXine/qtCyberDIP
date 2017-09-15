@@ -43,6 +43,7 @@ comSPH(nullptr), comPosX(0), comPosY(0), comIsDown(false), comFetch(false)
 	connect(ui->capScanButton, SIGNAL(clicked()), this, SLOT(capClickScanButton()));
 	connect(ui->capStartButton, SIGNAL(clicked()), this, SLOT(capClickConnect()));
 	connect(ui->capList, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(capDoubleClickWin(QListWidgetItem*)));
+	connect(ui->capList, SIGNAL(currentRowChanged(int)), this, SLOT(capHandleChanged(int)));
 	connect(ui->vodBrowseButton, SIGNAL(clicked()), this, SLOT(vodClickBrowseButton()));
 	connect(ui->vodPlayButton, SIGNAL(clicked()), this, SLOT(vodClickPlayButton()));
 	connect(ui->vodPauseButton, SIGNAL(clicked()), this, SLOT(vodClickPauseButton()));
@@ -682,7 +683,7 @@ void qtCyberDip::comUpdateUI()
 {
 	bool online = comSPH;
 	if (online){ online = comSPH->isOpen(); }
-	ui->comConnectButton->setText((online) ? "Disconnect" : "Connect");
+	ui->comConnectButton->setText((online) ? "DISCONNECT" : "CONNECT");
 	ui->comSendButton->setEnabled(online);
 	ui->comHitButton->setEnabled(online);
 	ui->comHitButton->setEnabled(online);
@@ -845,6 +846,7 @@ void qtCyberDip::comHitUp()
 void qtCyberDip::capClickClearButton()
 {
 	ui->capList->clear();
+	ui->capHandleEdit->setText("");
 	capWins.clear();
 }
 
@@ -852,7 +854,21 @@ void qtCyberDip::capClickScanButton()
 {
 
 	capClickClearButton();
-	EnumWindows(capEveryWindowProc, (LPARAM) this);
+	HWND hd = GetDesktopWindow();        //得到桌面句柄
+	hd = GetWindow(hd, GW_CHILD);        //得到屏幕上第一个子窗口
+	while (hd != NULL)                    //循环得到所有的子窗口
+	{
+		capHandleFilter(hd);
+		hd = GetNextWindow(hd, GW_HWNDNEXT);
+	}
+}
+
+void qtCyberDip::capHandleChanged(int p)
+{
+	if (p > capWins.size() - 1 || p < 0){ return; }
+	HWND hd = capWins[p];
+	QString handle = QString("%1").arg((uint)hd, 8, 16, QChar('0'));
+	ui->capHandleEdit->setText(handle);
 }
 
 void qtCyberDip::capInitScale()
@@ -865,40 +881,56 @@ void qtCyberDip::capInitScale()
 	ui->capScaleBox->setCurrentIndex(0);
 }
 
-void qtCyberDip::capAddhWnd(HWND hWnd, QString nameToShow)
+void qtCyberDip::capAddhWnd(HWND hWnd, QString nameToShow, bool isTarget = false)
 {
 	capWins.push_back(hWnd);
-	ui->capList->addItem(nameToShow);
+	ui->capList->blockSignals(true);
+	QListWidgetItem* itm = new QListWidgetItem(nameToShow);
+	if (isTarget){ itm->setForeground(Qt::red); }
+	ui->capList->addItem(itm);
+	ui->capList->blockSignals(false);
 }
 
-BOOL CALLBACK capEveryWindowProc(HWND hWnd, LPARAM parameter)
+void qtCyberDip::capHandleFilter(HWND hWnd)
 {
 	// 不可见、不可激活的窗口不作考虑。
-	if (!IsWindowVisible(hWnd)){ return true; }
-	if (!IsWindowEnabled(hWnd)){ return true; }
-	// 弹出式窗口不作考虑。
-	LONG gwl_style = GetWindowLong(hWnd, GWL_STYLE);
-	if ((gwl_style & WS_POPUP) && !(gwl_style & WS_CAPTION)){ return true; }
-
-	// 父窗口是可见或可激活的窗口不作考虑。
-	HWND hParent = (HWND)GetWindowLong(hWnd, GW_OWNER);
-	if (IsWindowEnabled(hParent)){ return true; }
-	if (IsWindowVisible(hParent)){ return true; }
-
-	wchar_t szCaption[500];
+	if (!IsWindowEnabled(hWnd)){ return; }
+	if (!IsWindowVisible(hWnd)){ return; }
+	// 按类名筛选窗口
+	wchar_t szCaption[500], szName[500];
 	::GetWindowText(hWnd, szCaption, sizeof(szCaption));
+	::GetClassName(hWnd, szName, sizeof(szName));
+	QString text = QString::fromWCharArray(szCaption);
+	QString cname = QString::fromWCharArray(szName);
+	if (!cname.compare("ApplicationFrameWindow")){ return; }
+	//根据类名筛选
+	bool airplayer = !cname.compare("CHWindow") && text.isEmpty(); //airplayer的窗口特征
+	bool totalcontrol = !cname.compare("SunAwtFrame") && !text.contains("Total");//totalcontrol的窗口特征
+	bool target = airplayer || totalcontrol;
+	if (!target)
+	{
+		// 弹出式窗口不作考虑。
+		LONG gwl_style = GetWindowLong(hWnd, GWL_STYLE);
+		if ((gwl_style & WS_POPUP) && !(gwl_style & WS_CAPTION)){ return; }
+		//按尺寸过滤窗口50*50
+		::RECT wRect;
+		if (!::GetWindowRect(hWnd, &wRect)){ return; }
+		if (wRect.right - wRect.left < 50 || wRect.bottom - wRect.top < 50){return;}
+		// 父窗口是可见或可激活的窗口不作考虑
+		HWND hParent = (HWND)GetWindowLong(hWnd, GW_OWNER);
+		if (IsWindowEnabled(hParent)){ return; }
+		if (IsWindowVisible(hParent)){ return; }
+	}
 	//if (wcslen(szCaption) <= 0){ return true; }
-	((qtCyberDip*)parameter)->capAddhWnd(hWnd, "0x" + QString::number((uint)hWnd, 16) + "  " + QString::fromWCharArray(szCaption));
-	return true;
+	capAddhWnd(hWnd, QString("0x%1").arg((uint)hWnd, 8, 16, QChar('0')) + "  " + text + " [" + cname.append("]"), target);
+	return;
 }
 
 void qtCyberDip::capClickConnect()
 {
-
-	int index = ui->capList->currentRow();
-	if (index > capWins.size() - 1 || index < 0){ return; }
 	setCursor(Qt::WaitCursor);
-	qDebug() << "Windows Handle: " << capWins[index];
+	QString handle = ui->capHandleEdit->text();
+	qDebug() << "Windows Handle: " << handle;
 	if (capSF != nullptr)
 	{
 		delete capSF;
@@ -910,7 +942,7 @@ void qtCyberDip::capClickConnect()
 #endif
 	connect(capSF, SIGNAL(capFinished()), this, SLOT(formClosed()), Qt::QueuedConnection);
 	capSF->capSetScaleRatio(ui->capScaleBox->currentText());
-	capSF->capSetHWND(capWins[index]);
+	capSF->capSetHWND((HWND)handle.toInt(0,16));
 	hide();
 	capClickClearButton();
 	setCursor(Qt::ArrowCursor);
@@ -925,8 +957,10 @@ void qtCyberDip::capDoubleClickWin(QListWidgetItem* item)
 
 void qtCyberDip::vodClickBrowseButton()
 {
-	vodBrowsePath();
-	vodClickPlayButton();
+	if (!vodBrowsePath())
+	{
+		vodClickPlayButton();
+	}
 }
 
 void qtCyberDip::vodClickPlayButton()
@@ -980,14 +1014,14 @@ void qtCyberDip::vodUpdateUI()
 		ui->vodPathEdit->setEnabled(true);
 		ui->vodBrowseButton->setEnabled(true);
 		ui->vodPauseButton->setEnabled(false);
-		ui->vodPlayButton->setText("Play");
+		ui->vodPlayButton->setText("PLAY");
 	}
 	else
 	{
 		ui->vodPathEdit->setEnabled(false);
 		ui->vodBrowseButton->setEnabled(false);
 		ui->vodPauseButton->setEnabled(true);
-		ui->vodPlayButton->setText("Stop");
+		ui->vodPlayButton->setText("STOP");
 		if (vodPF->vodGetPause())
 		{
 			ui->vodPauseButton->setText("Resume");
@@ -999,10 +1033,11 @@ void qtCyberDip::vodUpdateUI()
 	}
 }
 
-void qtCyberDip::vodBrowsePath()
+int qtCyberDip::vodBrowsePath()
 {
 	QString fileName = QFileDialog::getOpenFileName(this, tr("select video:"), " ", tr("Videos(*.mp4 *.avi *.mkv);;All files(*.*)"));
 	ui->vodPathEdit->setText(fileName);
+	return (fileName.isEmpty()) ? 1 : 0;
 }
 
 void qtCyberDip::errLogWin(QString err)

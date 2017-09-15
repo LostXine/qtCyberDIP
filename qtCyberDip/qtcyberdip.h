@@ -67,6 +67,7 @@ private slots:
 	void capClickScanButton();
 	void capClickConnect();
 	void capDoubleClickWin(QListWidgetItem* item);
+	void capHandleChanged(int p);
 	void vodClickBrowseButton();
 	void vodClickPlayButton();
 	void vodClickPauseButton();
@@ -118,13 +119,12 @@ private:
 	/*******屏幕捕捉相关变量与方法*******/
 	QList<HWND> capWins;
 	void capInitScale();
+	void capHandleFilter(HWND hWnd);
 	//扫描添加窗口
-	void capAddhWnd(HWND hWnd, QString nameToShow);
-	//声明回调友元
-	friend BOOL CALLBACK capEveryWindowProc(HWND hWnd, LPARAM parameter);
+	void capAddhWnd(HWND hWnd, QString nameToShow, bool isTarget);
 	capScreenForm* capSF = nullptr;
 	/*******录像读取的相关变量与方法*******/
-	void vodBrowsePath();
+	int vodBrowsePath();
 	void vodUpdateUI();
 	vodPlayer* vodPF = nullptr;
 	QThread vodThread;
@@ -153,8 +153,5 @@ public:
 	void comHitOnce();
 };
 #endif
-
-BOOL CALLBACK capEveryWindowProc(HWND hWnd, LPARAM parameter);
-
 #endif // QTCYBERDIP_H
 
