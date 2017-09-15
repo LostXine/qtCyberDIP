@@ -877,8 +877,8 @@ BOOL CALLBACK capEveryWindowProc(HWND hWnd, LPARAM parameter)
 	if (!IsWindowVisible(hWnd)){ return true; }
 	if (!IsWindowEnabled(hWnd)){ return true; }
 	// 弹出式窗口不作考虑。
-	//LONG gwl_style = GetWindowLong(hWnd, GWL_STYLE);
-	//if ((gwl_style & WS_POPUP) && !(gwl_style & WS_CAPTION)){ return true; }
+	LONG gwl_style = GetWindowLong(hWnd, GWL_STYLE);
+	if ((gwl_style & WS_POPUP) && !(gwl_style & WS_CAPTION)){ return true; }
 
 	// 父窗口是可见或可激活的窗口不作考虑。
 	HWND hParent = (HWND)GetWindowLong(hWnd, GW_OWNER);
