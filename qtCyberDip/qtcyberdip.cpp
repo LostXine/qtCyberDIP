@@ -682,7 +682,7 @@ void qtCyberDip::comUpdateUI()
 {
 	bool online = comSPH;
 	if (online){ online = comSPH->isOpen(); }
-	ui->comConnectButton->setText((online) ? "Disconnect" : "Connect");
+	ui->comConnectButton->setText((online) ? "DISCONNECT" : "CONNECT");
 	ui->comSendButton->setEnabled(online);
 	ui->comHitButton->setEnabled(online);
 	ui->comHitButton->setEnabled(online);
@@ -877,8 +877,8 @@ BOOL CALLBACK capEveryWindowProc(HWND hWnd, LPARAM parameter)
 	if (!IsWindowVisible(hWnd)){ return true; }
 	if (!IsWindowEnabled(hWnd)){ return true; }
 	// 弹出式窗口不作考虑。
-	LONG gwl_style = GetWindowLong(hWnd, GWL_STYLE);
-	if ((gwl_style & WS_POPUP) && !(gwl_style & WS_CAPTION)){ return true; }
+	//LONG gwl_style = GetWindowLong(hWnd, GWL_STYLE);
+	//if ((gwl_style & WS_POPUP) && !(gwl_style & WS_CAPTION)){ return true; }
 
 	// 父窗口是可见或可激活的窗口不作考虑。
 	HWND hParent = (HWND)GetWindowLong(hWnd, GW_OWNER);
@@ -925,8 +925,10 @@ void qtCyberDip::capDoubleClickWin(QListWidgetItem* item)
 
 void qtCyberDip::vodClickBrowseButton()
 {
-	vodBrowsePath();
-	vodClickPlayButton();
+	if (!vodBrowsePath())
+	{
+		vodClickPlayButton();
+	}
 }
 
 void qtCyberDip::vodClickPlayButton()
@@ -999,10 +1001,11 @@ void qtCyberDip::vodUpdateUI()
 	}
 }
 
-void qtCyberDip::vodBrowsePath()
+int qtCyberDip::vodBrowsePath()
 {
 	QString fileName = QFileDialog::getOpenFileName(this, tr("select video:"), " ", tr("Videos(*.mp4 *.avi *.mkv);;All files(*.*)"));
 	ui->vodPathEdit->setText(fileName);
+	return (fileName.isEmpty()) ? 1 : 0;
 }
 
 void qtCyberDip::errLogWin(QString err)
