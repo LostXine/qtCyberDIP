@@ -982,14 +982,14 @@ void qtCyberDip::vodUpdateUI()
 		ui->vodPathEdit->setEnabled(true);
 		ui->vodBrowseButton->setEnabled(true);
 		ui->vodPauseButton->setEnabled(false);
-		ui->vodPlayButton->setText("Play");
+		ui->vodPlayButton->setText("PLAY");
 	}
 	else
 	{
 		ui->vodPathEdit->setEnabled(false);
 		ui->vodBrowseButton->setEnabled(false);
 		ui->vodPauseButton->setEnabled(true);
-		ui->vodPlayButton->setText("Stop");
+		ui->vodPlayButton->setText("STOP");
 		if (vodPF->vodGetPause())
 		{
 			ui->vodPauseButton->setText("Resume");
