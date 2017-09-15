@@ -27,7 +27,7 @@ CyberDIP是通过计算机USB控制的触摸屏点击设备(中国实用新型�
 qtCyberDIP contains 3 + 1 parts:
 * __Serial Port(COM)__: Serial port and g-code module to work with Arduino.
 * __[BBQScreen Client](https://github.com/xplodwild/bbqscreen_client)__: BBQScreen client module to decode frames from Android devices.
-* __Screen Capture__: Win32 API module to grab screen or windows, working with [AirPlayer](http://pro.itools.cn/airplayer) to read frames from iOS devices.
+* __Screen Capture__: Win32 API module to grab screen or windows, working with [AirPlayer](http://pro.itools.cn/airplayer) for iOS devices and [Total Control](http://tc.sigma-rt.com.cn/index.php) for Android devices.
 * __Game Controller__: User defined game controller, change this to play different games.
 
 ### Usage
