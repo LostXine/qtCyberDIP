@@ -4,8 +4,8 @@
 CyberDIP driver for windows in C++ 11.
 
 CyberDIP is a USB device clicking touchscreens of smartphones or pads under PC's control. 
-With the help of [grbl](https://github.com/grbl/grbl) running on an Arduino Nano, CyberDIP will translate serial port signals from your PC into 2D-motion and clicks.
-With the help of Computer Vision, CyberDIP can play many mobile games.
+With the help of [grbl](https://github.com/grbl/grbl) running on an Arduino Nano, CyberDIP translates serial port signals from your PC into 2D-motion and clicks.
+Combined with computer vision, CyberDIP can play many games autonomously on almost any devices with a touchscreen.
 
 本工程是依赖C++ 11标准编写的CyberDIP在Windows环境下的配套软件。
 
@@ -54,7 +54,7 @@ git clone https://github.com/LostXine/qtCyberDIP.git
 * 将 '3rdparty/x64' (默认x64，32位操作系统添加 '3rdprty/x86')加入系统环境变量 'Path' 中(注意不要清空原有内容)
 * 使用VS打开工程文件 [qtCyberDip.sln](/qtCyberDip.sln), 并按照 [stdafx.h](qtCyberDip/stdafx.h) 中的说明继续配置
 
-__请参加“数字图像处理基础”的同学注意:__
+### 请参加“数字图像处理基础”的同学注意:
 
 为了方便代码评阅，建议只修改 [usrGameController.h](/qtCyberDip/usrGameController.h) 和 [usrGameController.cpp](/qtCyberDip/usrGameController.cpp) 两个文件，最后使用git提交代码。
 
