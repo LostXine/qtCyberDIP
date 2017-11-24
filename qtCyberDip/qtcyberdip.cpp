@@ -878,6 +878,8 @@ void qtCyberDip::capInitScale()
 	ui->capScaleBox->addItem(QString("150%"));
 	ui->capScaleBox->addItem(QString("175%"));
 	ui->capScaleBox->addItem(QString("200%"));
+	ui->capScaleBox->addItem(QString("225%"));
+	ui->capScaleBox->addItem(QString("250%"));
 	ui->capScaleBox->setCurrentIndex(0);
 }
 
