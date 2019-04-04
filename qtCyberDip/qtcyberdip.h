@@ -9,6 +9,15 @@
 #include "vodPlayer.h"
 #include <QtNetwork/QUdpSocket>
 
+//camera
+#include <QMainWindow>  
+#include <QCamera>  
+#include <QCameraViewfinder>  
+#include <QCameraImageCapture>  
+#include <QFileDialog> 
+#include <QApplication>
+
+
 #ifdef VIA_OPENCV
 #include <opencv2\opencv.hpp>
 #include <opencv\cv.h>
@@ -25,6 +34,13 @@ struct Device
 	QString address;
 	QTime lastPing;
 };
+
+
+//camera
+class QCamera;
+class QCameraViewfinder;
+class QCameraImageCapture;
+
 
 class qtCyberDip : public QMainWindow
 {
@@ -74,6 +90,12 @@ private slots:
 	void processImg(QImage img);
 	void errLogWin(QString err);
 
+	//camera
+	void captureImage();
+	void displayImage(int, QImage);
+	void saveImage();
+	
+
 public slots:
 	void comLogAdd(QString txt, int type);
 	void comDeviceDelay(float delay);
@@ -82,6 +104,12 @@ public slots:
 
 private:
 	Ui::qtCyberDip *ui;
+
+	//camera
+	QCamera *camera;
+	QCameraViewfinder *viewfinder;
+	QCameraImageCapture *imageCapture;
+
 	/*******BBQ相关变量与方法*******/
 	QUdpSocket* bbqAnnouncer;
 	// Pair device name, device ip / List order is listWidget of devices

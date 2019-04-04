@@ -30,7 +30,7 @@ int usrGameController::usrProcessImage(cv::Mat& img)
 		qDebug() << "Invalid image. Size:" << imgSize.width <<"x"<<imgSize.height;
 		return -1;
 	}
-
+	qDebug() << imgSize.width;
 	//½ØÈ¡Í¼Ïñ±ßÔµ
 	cv::Mat pt = img(cv::Rect(0, UP_CUT, imgSize.width,imgSize.height));
 	cv::imshow(WIN_NAME, pt);

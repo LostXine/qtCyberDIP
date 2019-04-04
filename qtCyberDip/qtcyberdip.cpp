@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "qtcyberdip.h"
 
 #define ADB_PATH "prebuilts/adb.exe"
@@ -13,6 +13,28 @@ ui(new Ui::qtCyberDip), bbqADBProcess(nullptr), bbqDebugWidget(nullptr), bbqServ
 comSPH(nullptr), comPosX(0), comPosY(0), comIsDown(false), comFetch(false)
 {
 	ui->setupUi(this);
+
+
+
+	// camera
+	camera = new QCamera(this);
+	viewfinder = new QCameraViewfinder(this);
+	imageCapture = new QCameraImageCapture(camera);
+
+	ui->ImageView->addWidget(viewfinder);
+	ui->ImageCapture->setScaledContents(true);
+
+	camera->setCaptureMode(QCamera::CaptureStillImage);
+	camera->setViewfinder(viewfinder);
+	camera->start();
+
+	connect(imageCapture, SIGNAL(imageCaptured(int, QImage)), this, SLOT(displayImage(int, QImage)));
+	connect(ui->buttonCapture, SIGNAL(clicked()), this, SLOT(captureImage()));
+	connect(ui->buttonSave, SIGNAL(clicked()), this, SLOT(saveImage()));
+	connect(ui->buttonQuit, SIGNAL(clicked()), qApp, SLOT(quit()));
+
+
+
 
 	// Setup UDP discovery socket
 	bbqAnnouncer = new QUdpSocket(this);
@@ -48,10 +70,10 @@ comSPH(nullptr), comPosX(0), comPosY(0), comIsDown(false), comFetch(false)
 	connect(ui->vodPlayButton, SIGNAL(clicked()), this, SLOT(vodClickPlayButton()));
 	connect(ui->vodPauseButton, SIGNAL(clicked()), this, SLOT(vodClickPauseButton()));
 
-	capInitScale();//ComboBox³õÊ¼»¯
+	capInitScale();//ComboBoxåˆå§‹åŒ–
 	comUpdatePos();
 
-	//¼àÌı×Ó¿Ø¼şÊÂ¼ş
+	//ç›‘å¬å­æ§ä»¶äº‹ä»¶
 	ui->comSelList->installEventFilter(this);
 	//     | Who sends event &&         | Who will watch event
 
@@ -63,6 +85,10 @@ qtCyberDip::~qtCyberDip()
 {
 	delete ui;
 }
+
+
+
+
 
 void qtCyberDip::closeEvent(QCloseEvent* evt)
 {
@@ -106,13 +132,17 @@ void qtCyberDip::timerEvent(QTimerEvent* evt)
 
 bool qtCyberDip::eventFilter(QObject* watched, QEvent* event)
 {
-	//¶¨Òåµã»÷comboboxÖ®ºóË¢ĞÂ¿ÉÓÃCOM¿Ú
+	//å®šä¹‰ç‚¹å‡»comboboxä¹‹ååˆ·æ–°å¯ç”¨COMå£
 	if (watched == ui->comSelList && event->type() == QEvent::MouseButtonPress)
 	{
 		comScanPorts();
 	}
 	return QObject::eventFilter(watched, event);
 }
+
+
+
+
 
 void qtCyberDip::bbqDiscoveryReadyRead()
 {
@@ -745,12 +775,16 @@ void qtCyberDip::comScanPorts()
 	}
 }
 
+
+
+
+
 void qtCyberDip::comMoveTo(double x, double y)
 {
 	if (x == comPosX && y == comPosY){ return; }
 	comPosX = x;
 	comPosY = y;
-	comRequestToSend("G90");//¾ø¶Ô×ø±ê
+	comRequestToSend("G90");//ç»å¯¹åæ ‡
 	comRequestToSend("G0 X" + QString::number(-comPosX) + " Y" + QString::number(-comPosY));
 	comUpdatePos();
 }
@@ -792,8 +826,8 @@ void qtCyberDip::comDeviceDelay(float delay = 0.01)
 void qtCyberDip::comHitOnce()
 {
 	comHitDown();
-	comRequestToSend("G91");//Ïà¶Ô×ø±ê
-	//ÓÃ²»´æÔÚµÄZÖáÊµÏÖÑÓÊ±¹¦ÄÜ
+	comRequestToSend("G91");//ç›¸å¯¹åæ ‡
+	//ç”¨ä¸å­˜åœ¨çš„Zè½´å®ç°å»¶æ—¶åŠŸèƒ½
 	comDeviceDelay(0.01);
 	comHitUp();
 	comDeviceDelay(0.01);
@@ -854,9 +888,9 @@ void qtCyberDip::capClickScanButton()
 {
 
 	capClickClearButton();
-	HWND hd = GetDesktopWindow();        //µÃµ½×ÀÃæ¾ä±ú
-	hd = GetWindow(hd, GW_CHILD);        //µÃµ½ÆÁÄ»ÉÏµÚÒ»¸ö×Ó´°¿Ú
-	while (hd != NULL)                    //Ñ­»·µÃµ½ËùÓĞµÄ×Ó´°¿Ú
+	HWND hd = GetDesktopWindow();        //å¾—åˆ°æ¡Œé¢å¥æŸ„
+	hd = GetWindow(hd, GW_CHILD);        //å¾—åˆ°å±å¹•ä¸Šç¬¬ä¸€ä¸ªå­çª—å£
+	while (hd != NULL)                    //å¾ªç¯å¾—åˆ°æ‰€æœ‰çš„å­çª—å£
 	{
 		capHandleFilter(hd);
 		hd = GetNextWindow(hd, GW_HWNDNEXT);
@@ -895,30 +929,30 @@ void qtCyberDip::capAddhWnd(HWND hWnd, QString nameToShow, bool isTarget = false
 
 void qtCyberDip::capHandleFilter(HWND hWnd)
 {
-	// ²»¿É¼û¡¢²»¿É¼¤»îµÄ´°¿Ú²»×÷¿¼ÂÇ¡£
+	// ä¸å¯è§ã€ä¸å¯æ¿€æ´»çš„çª—å£ä¸ä½œè€ƒè™‘ã€‚
 	if (!IsWindowEnabled(hWnd)){ return; }
 	if (!IsWindowVisible(hWnd)){ return; }
-	// °´ÀàÃûÉ¸Ñ¡´°¿Ú
+	// æŒ‰ç±»åç­›é€‰çª—å£
 	wchar_t szCaption[500], szName[500];
 	::GetWindowText(hWnd, szCaption, sizeof(szCaption));
 	::GetClassName(hWnd, szName, sizeof(szName));
 	QString text = QString::fromWCharArray(szCaption);
 	QString cname = QString::fromWCharArray(szName);
 	if (!cname.compare("ApplicationFrameWindow")){ return; }
-	//¸ù¾İÀàÃûÉ¸Ñ¡
-	bool airplayer = !cname.compare("CHWindow") && text.isEmpty(); //airplayerµÄ´°¿ÚÌØÕ÷
-	bool totalcontrol = !cname.compare("SunAwtFrame") && !text.contains("Total");//totalcontrolµÄ´°¿ÚÌØÕ÷
+	//æ ¹æ®ç±»åç­›é€‰
+	bool airplayer = !cname.compare("CHWindow") && text.isEmpty(); //airplayerçš„çª—å£ç‰¹å¾
+	bool totalcontrol = !cname.compare("SunAwtFrame") && !text.contains("Total");//totalcontrolçš„çª—å£ç‰¹å¾
 	bool target = airplayer || totalcontrol;
 	if (!target)
 	{
-		// µ¯³öÊ½´°¿Ú²»×÷¿¼ÂÇ¡£
+		// å¼¹å‡ºå¼çª—å£ä¸ä½œè€ƒè™‘ã€‚
 		LONG gwl_style = GetWindowLong(hWnd, GWL_STYLE);
 		if ((gwl_style & WS_POPUP) && !(gwl_style & WS_CAPTION)){ return; }
-		//°´³ß´ç¹ıÂË´°¿Ú50*50
+		//æŒ‰å°ºå¯¸è¿‡æ»¤çª—å£50*50
 		::RECT wRect;
 		if (!::GetWindowRect(hWnd, &wRect)){ return; }
 		if (wRect.right - wRect.left < 50 || wRect.bottom - wRect.top < 50){return;}
-		// ¸¸´°¿ÚÊÇ¿É¼û»ò¿É¼¤»îµÄ´°¿Ú²»×÷¿¼ÂÇ
+		// çˆ¶çª—å£æ˜¯å¯è§æˆ–å¯æ¿€æ´»çš„çª—å£ä¸ä½œè€ƒè™‘
 		HWND hParent = (HWND)GetWindowLong(hWnd, GW_OWNER);
 		if (IsWindowEnabled(hParent)){ return; }
 		if (IsWindowVisible(hParent)){ return; }
@@ -1000,6 +1034,8 @@ void qtCyberDip::vodClickPlayButton()
 	vodUpdateUI();
 }
 
+
+
 void qtCyberDip::vodClickPauseButton()
 {
 	if (vodPF != nullptr)
@@ -1040,6 +1076,34 @@ int qtCyberDip::vodBrowsePath()
 	QString fileName = QFileDialog::getOpenFileName(this, tr("select video:"), " ", tr("Videos(*.mp4 *.avi *.mkv);;All files(*.*)"));
 	ui->vodPathEdit->setText(fileName);
 	return (fileName.isEmpty()) ? 1 : 0;
+}
+
+// camera
+void qtCyberDip::captureImage()
+{
+	//ui->statusBar->showMessage(tr("capturing..."), 1000);
+	qDebug() << "capture!!";
+	imageCapture->capture();
+}
+
+void qtCyberDip::displayImage(int, QImage image)
+{
+	ui->ImageCapture->setPixmap(QPixmap::fromImage(image));;
+	//ui->statusBar->showMessage(tr("captureÂ OK!"), 5000);
+}
+
+void qtCyberDip::saveImage()
+{
+	QString fileName = QFileDialog::getSaveFileName(this, tr("saveÂ file"), QDir::homePath(), tr("jpegfile(*.jpg)"));
+	if (fileName.isEmpty()){
+		//ui->statusBar->showMessage(tr("saveÂ cancel"), 5000);
+		return;
+	}
+	const QPixmap* pixmap = ui->ImageCapture->pixmap();
+	if (pixmap){
+		pixmap->save(fileName);
+		//ui->statusBar->showMessage(tr("saveÂ OK"), 5000);
+	}
 }
 
 void qtCyberDip::errLogWin(QString err)
@@ -1085,7 +1149,7 @@ void qtCyberDip::formCleanning()
 #ifdef VIA_OPENCV
 	if (usrGC != nullptr)
 	{
-		delete (usrGameController*)usrGC; //delete²¢²»»áÇå¿ÕÖ¸Õë,ĞèÒªÎªÖ¸ÕëÖ¸¶¨ÀàĞÍ²Å¿ÉÒÔÕıÈ·ÊÍ·Å¸ÃÊµÀı
+		delete (usrGameController*)usrGC; //deleteå¹¶ä¸ä¼šæ¸…ç©ºæŒ‡é’ˆ,éœ€è¦ä¸ºæŒ‡é’ˆæŒ‡å®šç±»å‹æ‰å¯ä»¥æ­£ç¡®é‡Šæ”¾è¯¥å®ä¾‹
 		usrGC = nullptr;
 	}
 #endif
