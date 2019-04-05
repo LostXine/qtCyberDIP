@@ -38,8 +38,6 @@
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)$(Platform)\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)</TargetName>
-    <IncludePath>D:\opencv2.4.9\opencv\build\include\opencv2;D:\opencv2.4.9\opencv\build\include\opencv;D:\opencv2.4.9\opencv\build\include;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\opencv2.4.9\opencv\build\x64\vc12\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
@@ -60,39 +58,7 @@
       <SubSystem>Console</SubSystem>
       <AdditionalLibraryDirectories>$(QTDIR)\lib;$(SolutionDir)\3rdparty\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>opencv_ml249d.lib;
-
-opencv_calib3d249d.lib;
-
-opencv_contrib249d.lib
-
-;opencv_core249d.lib;
-
-opencv_features2d249d.lib;
-
-opencv_flann249d.lib;
-
-opencv_gpu249d.lib
-
-;opencv_highgui249d.lib;
-
-opencv_imgproc249d.lib
-
-;opencv_legacy249d.lib;
-
-opencv_objdetect249d.lib
-
-;opencv_ts249d.lib
-
-;opencv_video249d.lib;
-
-opencv_nonfree249d.lib;opencv_ocl249d.lib
-
-;opencv_photo249d.lib;opencv_stitching249d.lib;
-
-opencv_superres249d.lib
-
-;opencv_videostab249d.lib;qtmaind.lib;Qt5SerialPortd.lib;Qt5Cored.lib;Qt5Guid.lib;Qt5Multimediad.lib;Qt5Networkd.lib;Qt5OpenGLd.lib;opengl32.lib;glu32.lib;Qt5Widgetsd.lib;Qt5MultimediaWidgetsd.lib;avutil.lib;avcodec.lib;avformat.lib;swscale.lib;swresample.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>qtmaind.lib;Qt5SerialPortd.lib;Qt5Cored.lib;Qt5Guid.lib;Qt5Multimediad.lib;Qt5Networkd.lib;Qt5OpenGLd.lib;opengl32.lib;glu32.lib;Qt5Widgetsd.lib;Qt5MultimediaWidgetsd.lib;avutil.lib;avcodec.lib;avformat.lib;swscale.lib;swresample.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <TargetMachine>MachineX64</TargetMachine>
     </Link>
   </ItemDefinitionGroup>
