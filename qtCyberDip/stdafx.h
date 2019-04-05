@@ -18,7 +18,7 @@
 //*************************相关定义*****************************//
 //************************Definitions***************************//
 
-#define VIA_OPENCV
+//#define VIA_OPENCV
 #define RANGE_X 1
 #define RANGE_Y 1
 #define UP_CUT 35.0
