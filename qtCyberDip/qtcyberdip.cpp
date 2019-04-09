@@ -47,14 +47,15 @@ comSPH(nullptr), comPosX(0), comPosY(0), comIsDown(false), comFetch(false)
 	connect(ui->vodBrowseButton, SIGNAL(clicked()), this, SLOT(vodClickBrowseButton()));
 	connect(ui->vodPlayButton, SIGNAL(clicked()), this, SLOT(vodClickPlayButton()));
 	connect(ui->vodPauseButton, SIGNAL(clicked()), this, SLOT(vodClickPauseButton()));
+	connect(ui->camOpenButton, SIGNAL(clicked()), this, SLOT(camClickOpenButton()));
 
 	capInitScale();//ComboBox初始化
 	comUpdatePos();
 
 	//监听子控件事件
 	ui->comSelList->installEventFilter(this);
+	ui->camSelList->installEventFilter(this);
 	//     | Who sends event &&         | Who will watch event
-
 
 	startTimer(500);
 }
@@ -107,9 +108,14 @@ void qtCyberDip::timerEvent(QTimerEvent* evt)
 bool qtCyberDip::eventFilter(QObject* watched, QEvent* event)
 {
 	//定义点击combobox之后刷新可用COM口
-	if (watched == ui->comSelList && event->type() == QEvent::MouseButtonPress)
+	if (event->type() == QEvent::MouseButtonPress)
 	{
-		comScanPorts();
+		if (watched == ui->comSelList){
+			comScanPorts();
+		}
+		else if (watched == ui->camSelList){
+			camScanCameras();
+		}
 	}
 	return QObject::eventFilter(watched, event);
 }
@@ -734,14 +740,14 @@ void  qtCyberDip::comLogAdd(QString txt, int type = 0)
 void qtCyberDip::comScanPorts()
 {
 	ui->comSelList->clear();
-	comPorts.clear();
-	foreach(const QSerialPortInfo &info, QSerialPortInfo::availablePorts())
+	//comPorts.clear();
+	comPorts = QSerialPortInfo::availablePorts();
+	foreach(const QSerialPortInfo &info, comPorts)
 	{
 		//qDebug() << "Name        : " << info.portName();
 		//qDebug() << "Description : " << info.description();
 		//qDebug() << "Manufacturer: " << info.manufacturer();
 		ui->comSelList->addItem(info.portName() + " " + info.description());
-		comPorts.push_back(info);
 	}
 }
 
@@ -978,12 +984,12 @@ void qtCyberDip::vodClickPlayButton()
 			setCursor(Qt::ArrowCursor);
 			return;
 		}
-		vodPF = new vodPlayer();
+		vodPF = new vodPlayer(path);
 #ifdef VIA_OPENCV
 		usrGC = new usrGameController(this);
 #endif
 		vodPF->moveToThread(&vodThread);
-		vodPF->setPath(path);
+		//vodPF->setPath(path);
 		connect(vodPF, SIGNAL(vodFinished()), this, SLOT(formCleanning()), Qt::QueuedConnection);
 		connect(vodPF, SIGNAL(imgReady(QImage)), this, SLOT(processImg(QImage)));
 		connect(vodPF, SIGNAL(vodErrLog(QString)), this, SLOT(errLogWin(QString)));
@@ -1048,6 +1054,58 @@ void qtCyberDip::errLogWin(QString err)
 	QMessageBox::warning(NULL, "Error", err, QMessageBox::Ok, QMessageBox::Ok);
 }
 
+void qtCyberDip::camClickOpenButton(){
+	setCursor(Qt::WaitCursor);
+	if (camPF == nullptr)
+	{
+		int index = ui->camSelList->currentIndex();
+		if (index >= 0 && index < camDevices.length())
+		{
+			camPF = new camPlayer(camDevices[index].description());
+#ifdef VIA_OPENCV
+			usrGC = new usrGameController(this);
+#endif
+			camPF->moveToThread(&camThread);
+			connect(camPF, SIGNAL(camFinished()), this, SLOT(formCleanning()), Qt::QueuedConnection);
+			connect(camPF, SIGNAL(imgReady(QImage)), this, SLOT(processImg(QImage)));
+			connect(camPF, SIGNAL(camErrLog(QString)), this, SLOT(errLogWin(QString)));
+			connect(&camThread, SIGNAL(started()), camPF, SLOT(camRun()), Qt::QueuedConnection);
+			camThread.start();
+		}
+	}
+	else
+	{
+		camPF->camStop();
+		camThread.quit();
+		camThread.wait();
+	}
+	setCursor(Qt::ArrowCursor);
+	camUpdateUI();
+}
+
+void qtCyberDip::camUpdateUI(){
+	if (camPF == nullptr){
+		ui->camSelList->setEnabled(true);
+		ui->camOpenButton->setText("OPEN");
+	}
+	else {
+		ui->camSelList->setEnabled(false);
+		ui->camOpenButton->setText("CLOSE");
+	}
+}
+
+void qtCyberDip::camScanCameras(){
+	ui->camSelList->clear();
+	//camDevices.clear();
+	camDevices = QCameraInfo::availableCameras();
+	foreach(const QCameraInfo &cameraInfo, camDevices) {
+		//qDebug() << "Name: " << cameraInfo.deviceName();
+		//qDebug() << "Position: " << cameraInfo.position();
+		//qDebug() << "Description: " << cameraInfo.description();
+		ui->camSelList->addItem(cameraInfo.description());
+	}
+}
+
 void qtCyberDip::formClosed()
 {
 	comClickRetButton();
@@ -1082,6 +1140,19 @@ void qtCyberDip::formCleanning()
 		vodPF = nullptr;
 	}
 	vodUpdateUI();
+	if (camPF != nullptr)
+	{
+		this->disconnect(camPF, SIGNAL(imgReady(QImage)));
+		camPF->camStop();
+		if (camThread.isRunning())
+		{
+			camThread.exit();
+			camThread.wait();
+		}
+		delete camPF;
+		camPF = nullptr;
+	}
+	camUpdateUI();
 #ifdef VIA_OPENCV
 	if (usrGC != nullptr)
 	{
@@ -1098,10 +1169,14 @@ void qtCyberDip::processImg(QImage img)
 	{
 		ui->vodDisplay->setImage(img);
 	}
+	if (ptr == camPF)
+	{
+		ui->camDisplay->setImage(img);
+	}
 #ifdef VIA_OPENCV
 	if (usrGC != nullptr)
 	{
-		((usrGameController*)usrGC)->usrProcessImage(QImage2cvMat(img));
+		((usrGameController*)usrGC)->usrProcessImage(QImage2cvMcaat(img));
 	}
 #endif
 }

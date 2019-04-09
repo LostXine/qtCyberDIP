@@ -33,6 +33,7 @@ extern "C" {
 #include "libavcodec/avcodec.h"
 #include "libavformat/avformat.h"
 #include "libavutil/mathematics.h"
+#include "libavdevice/avdevice.h"
 //#include "libavformat/riff.h"
 //#include "libavformat/metadata.h"
 //#include "libavformat/utils.h"

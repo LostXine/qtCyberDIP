@@ -4,7 +4,10 @@
 
 using namespace ffmpeg;
 
-vodPlayer::vodPlayer(){}
+vodPlayer::vodPlayer(QString& path){
+	av_register_all();//注册FFMPEG组件
+	mPath = path;
+}
 
 vodPlayer::~vodPlayer()
 {
@@ -35,12 +38,9 @@ void vodPlayer::vodRun()
 	int             i, videoindex;
 	int y_size;
 	int ret, got_picture;
-	AVCodec         *pCodec;
 	int64_t start_time, pause_duration;
 
 	QByteArray ba = mPath.toUtf8();
-	av_register_all();//注册所有组件
-	avformat_network_init();//初始化网络
 	pFormatCtx = avformat_alloc_context();//初始化一个AVFormatContext
 	if (avformat_open_input(&pFormatCtx, ba.data(), NULL, NULL) != 0){//打开输入的视频文件
 		emit vodErrLog("Couldn't open input file:" + mPath);
