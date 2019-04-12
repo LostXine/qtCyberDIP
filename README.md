@@ -29,6 +29,7 @@ qtCyberDIP contains 4 + 1 parts:
 * __[BBQScreen Client](https://github.com/xplodwild/bbqscreen_client)__: BBQScreen client module to decode frames from Android devices.
 * __Screen Capture__: Win32 API module to grab screen or windows, working with [AirPlayer](http://pro.itools.cn/airplayer) for iOS devices and [Total Control](http://tc.sigma-rt.com.cn/index.php) for Android devices.
 * __Video Input__: Read image sequences from files.
+* __Camera Input__: Read image sequences from cameras.
 * __Game Controller__: User defined game controller, change this to play different games.
 
 ### Usage
