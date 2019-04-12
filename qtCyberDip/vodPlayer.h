@@ -9,7 +9,7 @@ class vodPlayer : public QObject
 	Q_OBJECT;
 
 public:
-	vodPlayer();
+	vodPlayer(QString& path);
 	~vodPlayer();
 	int setPath(QString& path);
 	void vodStop();
@@ -25,6 +25,7 @@ private:
 	ffmpeg::AVCodecContext  *pCodecCtx = nullptr;
 	ffmpeg::AVFrame *pFrame = nullptr, *pFrameRGB = nullptr;
 	ffmpeg::SwsContext *img_convert_ctx = nullptr;
+	ffmpeg::AVCodec *pCodec = nullptr;
 
 
 signals:

@@ -7,7 +7,9 @@
 #include "bbqScreenForm.h"
 #include "capScreenForm.h"
 #include "vodPlayer.h"
+#include "camPlayer.h"
 #include <QtNetwork/QUdpSocket>
+#include <QCameraInfo>
 
 #ifdef VIA_OPENCV
 #include <opencv2\opencv.hpp>
@@ -71,6 +73,7 @@ private slots:
 	void vodClickBrowseButton();
 	void vodClickPlayButton();
 	void vodClickPauseButton();
+	void camClickOpenButton();
 	void processImg(QImage img);
 	void errLogWin(QString err);
 
@@ -128,6 +131,12 @@ private:
 	void vodUpdateUI();
 	vodPlayer* vodPF = nullptr;
 	QThread vodThread;
+	/*******相机读取的相关变量与方法*******/
+	void camUpdateUI();
+	void camScanCameras();
+	QList<QCameraInfo> camDevices;
+	camPlayer* camPF = nullptr;
+	QThread camThread;
 	/*******OPEN_CV的相关变量与方法*******/
 #ifdef VIA_OPENCV
 	cv::Mat QImage2cvMat(QImage image);
