@@ -30,7 +30,7 @@ void camPlayer::camRun(){
 		emit camFinished();
 		return;
 	}
-	if (avformat_find_stream_info(pFormatCtx, NULL)<0)
+	if (avformat_find_stream_info(pFormatCtx, NULL) < 0)
 	{
 		emit camErrLog("Couldn't find stream information.");
 		emit camFinished();
@@ -39,7 +39,7 @@ void camPlayer::camRun(){
 
 	videoindex = -1;
 
-	for (i = 0; i<pFormatCtx->nb_streams; i++)
+	for (i = 0; i < pFormatCtx->nb_streams; i++)
 	{
 		if (pFormatCtx->streams[i]->codec->codec_type == AVMEDIA_TYPE_VIDEO)
 		{
@@ -64,7 +64,7 @@ void camPlayer::camRun(){
 		return;
 	}
 
-	if (avcodec_open2(pCodecCtx, pCodec, NULL)<0)
+	if (avcodec_open2(pCodecCtx, pCodec, NULL) < 0)
 	{
 		emit camErrLog("Could not open codec.");
 		emit camFinished();
@@ -81,38 +81,36 @@ void camPlayer::camRun(){
 	AVPacket *packet = (AVPacket *)av_malloc(sizeof(AVPacket));
 	while (mShouldRun)
 	{
-		while (1)
+		if (av_read_frame(pFormatCtx, packet) >= 0)
 		{
-			if (av_read_frame(pFormatCtx, packet) < 0){
-				mShouldRun = false;
-				emit camErrLog("Could not read frame.");
-				emit camFinished();
-				return;
-			}
-			
-			if (packet->stream_index == videoindex){
-				break;
-			}
-		}
-
-		ret = avcodec_decode_video2(pCodecCtx, pFrame, &got_picture, packet);
-		if (ret < 0){
-			emit camErrLog("Decode Error.");
-			emit camFinished();
-			return;
-		}
-		if (got_picture){
-			sws_scale(img_convert_ctx, (const uint8_t* const*)pFrame->data, pFrame->linesize, 0, pCodecCtx->height,
-				pFrameRGB->data, pFrameRGB->linesize);
-			y_size = pCodecCtx->width * pCodecCtx->height;
-
-			// Convert the frame to QImage
-			QImage mLastFrame(pCodecCtx->width, pCodecCtx->height, QImage::Format_RGB888);
-			for (int y = 0; y < pCodecCtx->height; y++)
+			if (packet->stream_index == videoindex)
 			{
-				memcpy(mLastFrame.scanLine(y), pFrameRGB->data[0] + y*pFrameRGB->linesize[0], pCodecCtx->width * 3);
+				ret = avcodec_decode_video2(pCodecCtx, pFrame, &got_picture, packet);
+				if (ret < 0)
+				{
+					emit camErrLog("Decode Error.");
+					emit camFinished();
+					return;
+				}
+				if (got_picture)
+				{
+					sws_scale(img_convert_ctx, (const uint8_t* const*)pFrame->data, pFrame->linesize, 0, pCodecCtx->height,
+						pFrameRGB->data, pFrameRGB->linesize);
+					y_size = pCodecCtx->width * pCodecCtx->height;
+					// Convert the frame to QImage
+					QImage mLastFrame(pCodecCtx->width, pCodecCtx->height, QImage::Format_RGB888);
+					for (int y = 0; y < pCodecCtx->height; y++){
+						memcpy(mLastFrame.scanLine(y), pFrameRGB->data[0] + y*pFrameRGB->linesize[0], pCodecCtx->width * 3);
+					}
+					emit imgReady(mLastFrame);
+				}
 			}
-			emit imgReady(mLastFrame);
+			ffmpeg::av_packet_unref(packet);
+		}
+		else
+		{
+			mShouldRun = false;
+			emit camErrLog("Could not read frame.");
 		}
 	}
 	emit camFinished();
