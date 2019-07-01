@@ -1001,6 +1001,7 @@ void qtCyberDip::vodClickPlayButton()
 		vodPF->vodStop();
 		vodThread.quit();
 		vodThread.wait();
+		delete vodPF;
 	}
 	setCursor(Qt::ArrowCursor);
 	vodUpdateUI();
@@ -1176,13 +1177,13 @@ void qtCyberDip::processImg(QImage img)
 #ifdef VIA_OPENCV
 	if (usrGC != nullptr)
 	{
-		((usrGameController*)usrGC)->usrProcessImage(QImage2cvMcaat(img));
+		((usrGameController*)usrGC)->usrProcessImage(QImage2cvMat(img));
 	}
 #endif
 }
 
 #ifdef VIA_OPENCV
-cv::Mat qtCyberDip::QImage2cvMat(QImage image)
+cv::Mat qtCyberDip::QImage2cvMat(const QImage& image)
 {
 	cv::Mat mat;
 	//qDebug() << image.format();
