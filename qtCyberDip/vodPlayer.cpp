@@ -37,7 +37,7 @@ void vodPlayer::vodRun()
 	int             i, videoindex;
 	int y_size;
 	int ret, got_picture;
-	ffmpeg::int64_t start_time, pause_duration;
+	int64_t start_time, pause_duration;
 
 	QByteArray ba = mPath.toUtf8();
 	pFormatCtx = avformat_alloc_context();//初始化一个AVFormatContext
@@ -99,7 +99,7 @@ void vodPlayer::vodRun()
 	while (mShouldRun){//读取一帧压缩数据
 		if (mPause)
 		{
-			ffmpeg::int64_t t1 = GetTickCount();
+			int64_t t1 = GetTickCount();
 			QThread::msleep(10);
 			pause_duration += (GetTickCount() - t1);
 			continue;
@@ -128,8 +128,8 @@ void vodPlayer::vodRun()
 					qDebug("Succeed to decode No.%05d frame!",frame_num);
 					AVRational time_base = pFormatCtx->streams[videoindex]->time_base;
 					AVRational time_base_q = { 1, AV_TIME_BASE };
-					ffmpeg::int64_t pts_time = av_rescale_q(packet->dts, time_base, time_base_q);
-					ffmpeg::int64_t now_time = (GetTickCount() - start_time - pause_duration) * 1000;
+					int64_t pts_time = av_rescale_q(packet->dts, time_base, time_base_q);
+					int64_t now_time = (GetTickCount() - start_time - pause_duration) * 1000;
 					if (pts_time > now_time){ QThread::usleep(pts_time - now_time); }
 
 					emit imgReady(mLastFrame);
@@ -150,7 +150,7 @@ void vodPlayer::vodRun()
 	while (mShouldRun) {
 		if (mPause)
 		{
-			ffmpeg::int64_t t1 = GetTickCount();
+			int64_t t1 = GetTickCount();
 			QThread::msleep(10);
 			pause_duration += (GetTickCount() - t1);
 			continue;
@@ -171,8 +171,8 @@ void vodPlayer::vodRun()
 		qDebug("Flush Decoder: Succeed to decode No.%05d frame!", frame_num);
 		AVRational time_base = pFormatCtx->streams[videoindex]->time_base;
 		AVRational time_base_q = { 1, AV_TIME_BASE };
-		ffmpeg::int64_t pts_time = av_rescale_q(packet->dts, time_base, time_base_q);
-		ffmpeg::int64_t now_time = (GetTickCount() - start_time - pause_duration) * 1000;
+		int64_t pts_time = av_rescale_q(packet->dts, time_base, time_base_q);
+		int64_t now_time = (GetTickCount() - start_time - pause_duration) * 1000;
 		if (pts_time > now_time){ QThread::usleep(pts_time - now_time); }
 		emit imgReady(mLastFrame);
 	}
